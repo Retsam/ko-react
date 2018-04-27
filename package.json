@@ -1,0 +1,20 @@
+{
+  "name": "ko-react",
+  "version": "1.0.0",
+  "description": "",
+  "main": "rollup.config.js",
+  "scripts": {
+    "lint": "tslint --project .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Retsam19",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "rollup": "^0.58.2",
+    "rollup-plugin-typescript2": "^0.13.0",
+    "tslint": "^5.9.1",
+    "tslint-microsoft-contrib": "^5.0.3",
+    "typescript": "^2.8.3"
+  }
+}
