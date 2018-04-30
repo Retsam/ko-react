@@ -1,4 +1,1 @@
-
-export default function getRandomNumber() {
-    return 4;
-}
+export {default as observe} from "./observe";
