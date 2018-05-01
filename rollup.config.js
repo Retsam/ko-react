@@ -7,6 +7,7 @@ export default {
       file: 'bundle.js',
       format: 'cjs'
     },
+    external: ['react', 'knockout'],
     plugins: [ typescriptPlugin({
         typescript: typescript
     }) ],
