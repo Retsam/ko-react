@@ -1,8 +1,9 @@
 {
-  "name": "knockout-react",
-  "version": "0.0.1",
+  "name": "@retsam/react-ko",
+  "version": "0.0.2",
   "description": "",
-  "main": "bundle.js",
+  "main": "dist/bundle.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "build": "rollup -c",
     "lint": "tslint --project .",

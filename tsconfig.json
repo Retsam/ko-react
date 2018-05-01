@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "module": "esnext",
     "target": "es5",
     "lib": ["es6", "dom"],
@@ -16,6 +17,7 @@
     "noUnusedLocals": true,
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "tests"
   ]
 }
