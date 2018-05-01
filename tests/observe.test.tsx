@@ -120,3 +120,16 @@ test("does not re-render child components on observable change", () => {
     expect(parentRenderFn).toHaveBeenCalledTimes(2);
     expect(childRenderFn).toHaveBeenCalledTimes(1);
 });
+
+test("stops tracking dependencies on unmount", () => {
+    const observable = ko.observable("foo");
+    const TestComponent = observe(() => <div>{observable()}</div>);
+
+    const component = shallow(<TestComponent />);
+
+    expect(observable.getSubscriptionsCount()).toBe(1);
+    component.unmount();
+
+    expect(observable.getSubscriptionsCount()).toBe(0);
+
+});

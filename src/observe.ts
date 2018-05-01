@@ -1,6 +1,8 @@
 import ko from "knockout";
 import { StatelessComponent, ComponentClass, Component, PureComponent } from "react";
 
+const noop = () => {/*do nothing*/};
+
 export default function observe<P>(componentClass: StatelessComponent<P> | ComponentClass<P>) {
     if(isStatelessComponent<P>(componentClass)) {
         componentClass = componentClassForStatelessComponent(componentClass);
@@ -23,6 +25,12 @@ export default function observe<P>(componentClass: StatelessComponent<P> | Compo
         });
         this.render = baseRender;
         return renderComputed();
+    };
+
+    const baseWillUnmount = componentClass.prototype.componentWillUnmount || noop;
+    componentClass.prototype.componentWillUnmount = function(this: Component<P>) {
+        baseWillUnmount();
+        renderComputed.dispose();
     };
 
     return componentClass;
