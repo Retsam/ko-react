@@ -5,16 +5,20 @@ export default function observe<P>(componentClass: StatelessComponent<P> | Compo
     if(isStatelessComponent<P>(componentClass)) {
         componentClass = componentClassForStatelessComponent(componentClass);
     }
+    // Override the render function with one that uses a computed to track observables
     const baseRender = componentClass.prototype.render;
     let renderComputed: KnockoutComputed<void>;
     componentClass.prototype.render = function(this: Component<P>, props: P) {
-        // Defer the evaluation so we can reset the prototype
         let firstRender = true;
         renderComputed = ko.computed(() => {
+            // On the first call, call the existing render function and return the results, so they can be returned
+            // out of the overridden render function
             if(firstRender) {
                 firstRender = false;
                 return baseRender.call(this);
             }
+            // On reevaluations due to observable changes, call forceUpdate
+            // This will internally trigger a call to render, which will allow the computed to continue to track observables
             this.forceUpdate();
         });
         this.render = baseRender;

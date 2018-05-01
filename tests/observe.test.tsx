@@ -33,10 +33,14 @@ test("re-renders when an observable changes", () => {
     const element = shallow(<TestComponent />);
     expect(element.equals(<div>Hello</div>));
     expect(renderFn).toHaveBeenCalledTimes(1);
-    observable("World");
 
-    expect(element.equals(<div>World</div>));
+    observable("There");
+    expect(element.equals(<div>There</div>));
     expect(renderFn).toHaveBeenCalledTimes(2);
+
+    observable("General Kenobi");
+    expect(element.equals(<div>General Kenobi</div>));
+    expect(renderFn).toHaveBeenCalledTimes(3);
 });
 
 test("re-renders on prop changes, as normal", () => {
@@ -66,7 +70,34 @@ test("re-renders on prop changes, as normal", () => {
 
 });
 
-test("does not rerender child components on observable change", () => {
+test("tracks observables properly", () => {
+    const usingNickname = ko.observable(false);
+    const nickname = ko.observable("The Senate");
+    const realName = ko.observable("Sheev");
+
+    const renderFn = jest.fn(() => (
+        <div>{usingNickname() ? nickname() : realName()}</div>
+    )) as StatelessComponent<{}>;
+    const TestComponent = observe(renderFn as StatelessComponent<{}>);
+    const element = shallow(<TestComponent />);
+
+    expect(element.equals(<div>Sheev</div>)).toBe(true);
+    expect(renderFn).toHaveBeenCalledTimes(1);
+
+    nickname("Vader");
+    // No re-render, shouldn't be observing the nickname() observable
+    expect(renderFn).toHaveBeenCalledTimes(1);
+
+    realName("Anakin");
+    expect(renderFn).toHaveBeenCalledTimes(2);
+
+    usingNickname(true);
+    expect(renderFn).toHaveBeenCalledTimes(3);
+    expect(element.equals(<div>Vader</div>));
+
+});
+
+test("does not re-render child components on observable change", () => {
     const childRenderFn = jest.fn(() => (
         <div>Child</div>
     ));
