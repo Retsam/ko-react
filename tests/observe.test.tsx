@@ -126,10 +126,15 @@ test("stops tracking dependencies on unmount", () => {
     const TestComponent = observe(() => <div>{observable()}</div>);
 
     const component = shallow(<TestComponent />);
+    const component2 = shallow(<TestComponent />);
 
-    expect(observable.getSubscriptionsCount()).toBe(1);
+    expect(observable.getSubscriptionsCount()).toBe(2);
     component.unmount();
 
+    expect(observable.getSubscriptionsCount()).toBe(1);
+
+    component2.unmount();
     expect(observable.getSubscriptionsCount()).toBe(0);
+
 
 });

@@ -1,39 +1,39 @@
 import ko from "knockout";
-import { StatelessComponent, ComponentClass, Component, PureComponent } from "react";
-
-const noop = () => {/*do nothing*/};
+import { StatelessComponent, ComponentClass, Component, PureComponent, ReactNode } from "react";
 
 export default function observe<P>(componentClass: StatelessComponent<P> | ComponentClass<P>) {
     if(isStatelessComponent<P>(componentClass)) {
         componentClass = componentClassForStatelessComponent(componentClass);
     }
-    // Override the render function with one that uses a computed to track observables
-    const baseRender = componentClass.prototype.render;
-    let renderComputed: KnockoutComputed<void>;
-    componentClass.prototype.render = function(this: Component<P>, props: P) {
-        let firstRender = true;
-        renderComputed = ko.computed(() => {
-            // On the first call, call the existing render function and return the results, so they can be returned
-            // out of the overridden render function
-            if(firstRender) {
-                firstRender = false;
-                return baseRender.call(this);
-            }
-            // On reevaluations due to observable changes, call forceUpdate
-            // This will internally trigger a call to render, which will allow the computed to continue to track observables
-            this.forceUpdate();
-        });
-        this.render = baseRender;
-        return renderComputed();
-    };
 
-    const baseWillUnmount = componentClass.prototype.componentWillUnmount || noop;
-    componentClass.prototype.componentWillUnmount = function(this: Component<P>) {
-        baseWillUnmount();
-        renderComputed.dispose();
-    };
+    return (class extends componentClass {
+        private __ko_react_computed?: KnockoutComputed<ReactNode>; // tslint:disable-line variable-name
 
-    return componentClass;
+        // Override the render function with one that uses a computed to track observables
+        render() {
+            let firstRender = true;
+            this.__ko_react_computed = ko.computed(() => {
+                // On the first call, call the existing render function and return the results, so they can be returned
+                // out of the overridden render function
+                if(firstRender) {
+                    firstRender = false;
+                    return super.render.call(this);
+                }
+                // On reevaluations due to observable changes, call forceUpdate
+                // This will internally trigger a call to render, which will allow the computed to continue to track observables
+                this.forceUpdate();
+            });
+            // Future calls should bypass this logic to avoid setting up the computed more than once
+            this.render = super.render;
+            return this.__ko_react_computed();
+        }
+
+        componentWillUnmount() {
+            if(super.componentWillUnmount) { super.componentWillUnmount(); }
+            this.__ko_react_computed!.dispose();
+        }
+    // This cast is necessary due to https://github.com/Microsoft/TypeScript/issues/17293
+    } as ComponentClass<P>);
 }
 
 function isStatelessComponent<P>(componentClass: any): componentClass is StatelessComponent<P> {
@@ -54,5 +54,5 @@ function componentClassForStatelessComponent<P>(componentClass: StatelessCompone
         render() {
             return componentClass.call(this, this.props, this.context);
         }
-    }
+    };
 }
