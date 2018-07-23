@@ -11,20 +11,21 @@ export default function observe<P>(componentClass: StatelessComponent<P> | Compo
 
         // Override the render function with one that uses a computed to track observables
         render() {
-            let firstRender = true;
+            if(this.__ko_react_computed) this.__ko_react_computed.dispose();
+
+            let firstRun = true;
+            // Each instance of this computed is only run once, to track dependencies.
+            // When any dependency changes, the computed is going to get thrown away and a
+            // new computed will be responsible
             this.__ko_react_computed = ko.computed(() => {
-                // On the first call, call the existing render function and return the results, so they can be returned
-                // out of the overridden render function
-                if(firstRender) {
-                    firstRender = false;
-                    return super.render.call(this);
-                }
-                // On reevaluations due to observable changes, call forceUpdate
-                // This will internally trigger a call to render, which will allow the computed to continue to track observables
-                this.forceUpdate();
+                if(!firstRun) { return; }
+                firstRun = false;
+
+                return super.render.call(this);
             });
-            // Future calls should bypass this logic to avoid setting up the computed more than once
-            this.render = super.render;
+
+            this.__ko_react_computed.subscribe(() => this.forceUpdate());
+
             return this.__ko_react_computed();
         }
 
