@@ -1,6 +1,6 @@
 {
   "name": "@retsam/react-ko",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "dist/bundle.js",
   "typings": "dist/index.d.ts",
