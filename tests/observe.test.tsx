@@ -97,6 +97,42 @@ test("tracks observables properly", () => {
 
 });
 
+test("can track observables based on props", () => {
+    const nickname = ko.observable("The Senate");
+    const realName = ko.observable("Sheev");
+
+    interface ChildProps { usingNickname: boolean; }
+    const childRenderFn = jest.fn(({usingNickname}: ChildProps) => (
+        <div>{usingNickname ? nickname() : realName()}</div>
+    ));
+    const ChildComponent = observe(childRenderFn as StatelessComponent<ChildProps>);
+    const TestComponent = observe(class extends React.Component<{}, ChildProps> {
+        constructor(props: {}) {
+            super(props);
+            this.state = {
+                usingNickname: true,
+            };
+        }
+        render() {
+            return <ChildComponent {...this.state} />;
+        }
+    });
+
+    const component = mount(<TestComponent />);
+    let callCount = 0;
+    expect(childRenderFn).toHaveBeenCalledTimes(++callCount);
+    // On initial render, the child computed is subscribed to nickname, since usingNickname is true
+    nickname("Vader");
+    expect(childRenderFn).toHaveBeenCalledTimes(++callCount);
+
+    // Changing usingNickname, the child computed needs to subscribe to realName, not nickname
+    component.setState({ usingNickname: false });
+    expect(childRenderFn).toHaveBeenCalledTimes(++callCount);
+
+    realName("Anakin");
+    expect(childRenderFn).toHaveBeenCalledTimes(++callCount);
+});
+
 test("does not re-render child components on observable change", () => {
     const childRenderFn = jest.fn(() => (
         <div>Child</div>
