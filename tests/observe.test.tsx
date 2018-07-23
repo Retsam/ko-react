@@ -9,7 +9,7 @@ test("accepts stateless components", () => {
         <div>Test</div>
     ));
     const element = shallow(<TestComponent />);
-    expect(element.equals(<div>Test</div>));
+    expect(element.equals(<div>Test</div>)).toBe(true);
 });
 
 test("accepts component classes", () => {
@@ -19,10 +19,10 @@ test("accepts component classes", () => {
         }
     });
     const element = shallow(<TestComponent />);
-    expect(element.equals(<div>Test</div>));
+    expect(element.equals(<div>Test</div>)).toBe(true);
 });
 
-test("re-renders when an observable changes", () => {
+test("re-renders when an observable changes", async () => {
     const observable = ko.observable("Hello");
 
     const renderFn = jest.fn(() => (
@@ -31,15 +31,15 @@ test("re-renders when an observable changes", () => {
     const TestComponent = observe(renderFn);
 
     const element = shallow(<TestComponent />);
-    expect(element.equals(<div>Hello</div>));
+    expect(element.equals(<div>Hello</div>)).toBe(true);
     expect(renderFn).toHaveBeenCalledTimes(1);
 
     observable("There");
-    expect(element.equals(<div>There</div>));
+    expect(element.update().equals(<div>There</div>)).toBe(true);
     expect(renderFn).toHaveBeenCalledTimes(2);
 
     observable("General Kenobi");
-    expect(element.equals(<div>General Kenobi</div>));
+    expect(element.update().equals(<div>General Kenobi</div>)).toBe(true);
     expect(renderFn).toHaveBeenCalledTimes(3);
 });
 
@@ -93,7 +93,7 @@ test("tracks observables properly", () => {
 
     usingNickname(true);
     expect(renderFn).toHaveBeenCalledTimes(3);
-    expect(element.equals(<div>Vader</div>));
+    expect(element.update().equals(<div>Vader</div>)).toBe(true);
 
 });
 
