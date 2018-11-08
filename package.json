@@ -13,8 +13,10 @@
   "author": "Retsam19",
   "license": "ISC",
   "dependencies": {
-    "@types/knockout": "^3.4.53",
-    "@types/react": "^16.3.10"
+    "@types/knockout": "^3.4.58",
+    "@types/react-dom": "^16.0.6",
+    "@types/react": "^16.3.10",
+    "react-dom": "^16.3.2"
   },
   "devDependencies": {
     "@types/enzyme": "^3.1.10",
@@ -25,7 +27,6 @@
     "jest": "^22.4.3",
     "knockout": "3.x",
     "react": "16.x",
-    "react-dom": "^16.3.2",
     "rollup": "^0.58.2",
     "rollup-plugin-typescript2": "^0.13.0",
     "ts-jest": "^22.4.4",
