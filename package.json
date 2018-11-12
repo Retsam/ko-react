@@ -15,10 +15,10 @@
   "author": "Retsam19",
   "license": "ISC",
   "dependencies": {
-    "@types/knockout": "^3.4.58",
-    "@types/react": "^16.3.10",
-    "@types/react-dom": "^16.0.6",
-    "react-dom": "^16.7.0"
+    "@types/knockout": "^3.4.63",
+    "@types/react": "^16.8.2",
+    "@types/react-dom": "^16.8.0",
+    "react-dom": "^16.8.0"
   },
   "devDependencies": {
     "@types/enzyme": "^3.1.10",
@@ -29,7 +29,7 @@
     "husky": "^1.3.1",
     "jest": "^22.4.3",
     "knockout": "3.x",
-    "react": "16.x",
+    "react": "^16.7.0",
     "rollup": "^0.58.2",
     "rollup-plugin-typescript2": "^0.13.0",
     "ts-jest": "^22.4.4",
@@ -39,7 +39,7 @@
   },
   "peerDependencies": {
     "knockout": "3.x",
-    "react": "16.x"
+    "react": "^16.7.0"
   },
   "repository": "github:Retsam/ko-react",
   "husky": {
