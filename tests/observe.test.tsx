@@ -3,7 +3,6 @@ import ko from "knockout";
 import React from "react";
 import { mount, shallow, StatelessComponent } from "./enzyme";
 
-// tslint:disable variable-name
 test("accepts stateless components", () => {
     const TestComponent = observe(() => (
         <div>Test</div>

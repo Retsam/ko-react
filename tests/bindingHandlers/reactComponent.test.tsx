@@ -6,7 +6,7 @@ import { setupKoTest } from "../koTestUtils";
 reactComponentBindingHandler.register();
 reactComponentBindingHandler.registerShorthandSyntax();
 
-const Greeter = ({name = "World"}: {name: string}) => ( // tslint:disable-line variable-name
+const Greeter = ({name = "World"}: {name: string}) => (
     <div>Hello, {name}</div>
 );
 const ObservableGreeter = ({name}: {name: KnockoutObservable<string>}) => ( // tslint:disable-line variable-name

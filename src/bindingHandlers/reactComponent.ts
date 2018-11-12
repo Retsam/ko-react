@@ -38,7 +38,7 @@ const registrars = {
                 const match = node.nodeValue!.match(/^\s*react\s*:\s*([\w\.]+)\s+((.|\n)+?)\s*$/);
                 if (match) {
                     const div = document.createElement("div");
-                    const [ /* wholeMatch */, Component, props ] = match; // tslint:disable-line variable-name
+                    const [ /* wholeMatch */, Component, props ] = match;
                     div.dataset.bind = `${bindingHandlerName}: { Component: ${Component}, props: ${props} }`;
                     node.parentNode!.replaceChild(div, node);
 

@@ -43,7 +43,8 @@
             "ban-keywords",
             "check-format",
             "allow-leading-underscore",
-            "allow-trailing-underscore"
+            "allow-trailing-underscore",
+            "allow-pascal-case"
         ],
         "whitespace": [
             true,
