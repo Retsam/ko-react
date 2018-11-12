@@ -30,6 +30,16 @@ test("accepts props", () => {
     expect(element.textContent).toBe("Hello, Mark");
 });
 
+test("accepts params for backwards compatibility", () => {
+    const vm = {
+        Greeter,
+    };
+    const element = setupKoTest(`
+        <div data-bind="reactComponent: { Component: Greeter, params: { name: 'Mark' } }"></div>
+    `, vm);
+    expect(element.textContent).toBe("Hello, Mark");
+});
+
 test("props can be an observable", () => {
     const vm = {
         Greeter,

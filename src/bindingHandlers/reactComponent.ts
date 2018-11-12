@@ -16,11 +16,11 @@ const bindingHandler: KnockoutBindingHandler<HTMLElement, ReactComponentBindingV
      * The main logic goes into update so that it will properly rerender if an observable is read inside the data-bind
      */
     update(element, valueAccessor) {
-        const { props, Component } = ko.toJS(valueAccessor());
+        const { props, Component, params } = ko.toJS(valueAccessor());
         if(!Component) {
             throw new Error("No component provided to reactComponent bindingHandler");
         }
-        ReactDOM.render(React.createElement(Component, props), element);
+        ReactDOM.render(React.createElement(Component, props || params), element); // props || params for backwards compatibility
     },
 };
 
