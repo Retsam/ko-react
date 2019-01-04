@@ -1,0 +1,52 @@
+import ko from "knockout";
+import React, { ComponentClass } from "react";
+import ReactDOM from "react-dom";
+
+export interface ReactComponentBindingValue {
+    Component: ComponentClass;
+    props: any;
+}
+
+const bindingHandler: KnockoutBindingHandler<HTMLElement, ReactComponentBindingValue> = {
+    init(element) {
+        ko.utils.domNodeDisposal.addDisposeCallback(element, () => ReactDOM.unmountComponentAtNode(element));
+        return { controlsDescendantBindings: true };
+    },
+    /**
+     * The main logic goes into update so that it will properly rerender if an observable is read inside the data-bind
+     */
+    update(element, valueAccessor) {
+        const { props, Component, params } = ko.toJS(valueAccessor());
+        if(!Component) {
+            throw new Error("No component provided to reactComponent bindingHandler");
+        }
+        ReactDOM.render(React.createElement(Component, props || params), element); // props || params for backwards compatibility
+    },
+};
+
+const noop = (() => {/* noop */});
+const registrars = {
+    register() {
+        ko.bindingHandlers.reactComponent = bindingHandler;
+    },
+    registerShorthandSyntax(bindingHandlerName = "reactComponent") {
+        const existingPreprocessNode = (ko.bindingProvider.instance as any).preprocessNode || noop;
+        (ko.bindingProvider.instance as any).preprocessNode = function(node: Node) {
+            if (node.nodeType === 8) {
+                const match = node.nodeValue!.match(/^\s*react\s*:\s*([\w\.]+)\s+((.|\n)+?)\s*$/);
+                if (match) {
+                    const div = document.createElement("div");
+                    const [ /* wholeMatch */, Component, props ] = match; // tslint:disable-line variable-name
+                    div.dataset.bind = `${bindingHandlerName}: { Component: ${Component}, props: ${props} }`;
+                    node.parentNode!.replaceChild(div, node);
+
+                    // Tell Knockout about the new nodes so that it can apply bindings to them
+                    return [div];
+                }
+            }
+            return existingPreprocessNode(node);
+        };
+    },
+};
+
+export default { ...bindingHandler, ...registrars};
