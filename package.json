@@ -8,7 +8,7 @@
     "build": "rollup -c",
     "lint": "tslint --project .",
     "test": "jest",
-    "prepublish": "npm run test && npm run build"
+    "prepare": "npm run test && npm run build"
   },
   "author": "Retsam19",
   "license": "ISC",
