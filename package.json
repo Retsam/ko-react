@@ -6,7 +6,9 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "rollup -c",
+    "prelint": "echo 'Running linter...'",
     "lint": "tslint --project .",
+    "pretest": "echo 'Running tests...'",
     "test": "jest",
     "prepare": "npm run test && npm run build"
   },
@@ -42,7 +44,7 @@
   "repository": "github:Retsam/ko-react",
   "husky": {
     "hooks": {
-      "pre-push": "npm test"
+      "pre-push": "npm run lint && npm test"
     }
   },
   "jest": {
