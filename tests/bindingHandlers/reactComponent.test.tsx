@@ -9,6 +9,9 @@ reactComponentBindingHandler.registerShorthandSyntax();
 const Greeter = ({name = "World"}: {name: string}) => ( // tslint:disable-line variable-name
     <div>Hello, {name}</div>
 );
+const ObservableGreeter = ({name}: {name: KnockoutObservable<string>}) => ( // tslint:disable-line variable-name
+    <div>Hello, {name()}</div>
+);
 
 test("renders the component", () => {
     const vm = {
@@ -54,11 +57,11 @@ test("props can be an observable", () => {
 });
 test("props can contain an observable", () => {
     const vm = {
-        Greeter,
+        ObservableGreeter,
         props: { name: ko.observable("John") },
     };
     const element = setupKoTest(`
-        <div data-bind="reactComponent: { Component: Greeter, props: props }"></div>
+        <div data-bind="reactComponent: { Component: ObservableGreeter, props: props }"></div>
     `, vm);
     expect(element.textContent).toBe("Hello, John");
     vm.props.name("Jonny");

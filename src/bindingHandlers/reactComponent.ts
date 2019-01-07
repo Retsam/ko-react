@@ -22,7 +22,7 @@ const bindingHandler: KnockoutBindingHandler<HTMLElement, ReactComponentBindingV
         if(!Component) {
             throw new Error("No component provided to reactComponent bindingHandler");
         }
-        ReactDOM.render(React.createElement(Component, props || params), element); // props || params for backwards compatibility
+        ReactDOM.render(React.createElement(Component, ko.unwrap(props) || ko.unwrap(params)), element); // props || params for backwards compatibility
     },
 };
 
