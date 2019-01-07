@@ -5,6 +5,8 @@ import ReactDOM from "react-dom";
 export interface ReactComponentBindingValue {
     Component: ComponentClass;
     props: any;
+    // Deprecated
+    params?: any;
 }
 
 const bindingHandler: KnockoutBindingHandler<HTMLElement, ReactComponentBindingValue> = {
@@ -16,7 +18,7 @@ const bindingHandler: KnockoutBindingHandler<HTMLElement, ReactComponentBindingV
      * The main logic goes into update so that it will properly rerender if an observable is read inside the data-bind
      */
     update(element, valueAccessor) {
-        const { props, Component, params } = ko.toJS(valueAccessor());
+        const { props, Component, params } = ko.unwrap(valueAccessor());
         if(!Component) {
             throw new Error("No component provided to reactComponent bindingHandler");
         }
