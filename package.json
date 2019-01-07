@@ -8,7 +8,7 @@
     "build": "rollup -c",
     "lint": "tslint --project .",
     "test": "jest",
-    "prepublish": "npm run build"
+    "prepublish": "npm run test && npm run build"
   },
   "author": "Retsam19",
   "license": "ISC",
@@ -24,6 +24,7 @@
     "@types/jest": "^22.2.3",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.7.1",
+    "husky": "^1.3.1",
     "jest": "^22.4.3",
     "knockout": "3.x",
     "react": "16.x",
@@ -39,6 +40,11 @@
     "react": "16.x"
   },
   "repository": "github:Retsam/ko-react",
+  "husky": {
+    "hooks": {
+      "pre-push": "npm test"
+    }
+  },
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
