@@ -1,6 +1,12 @@
 import ko from "knockout";
 import { useState, useLayoutEffect } from "react";
 
+/**
+ * Returns the result of a provided function, causing a rerender whenever
+ *  any observables read by the function change.
+ * @param func A pure function that reads observables to produce a value,
+ *      (does not need to be a ko.computed, and probably shouldn't be)
+ */
 function useComputed<T>(func: () => T) {
     const [ computed ] = useState(() => ko.pureComputed(func));
     const [ value, setValue ] = useState(computed.peek());

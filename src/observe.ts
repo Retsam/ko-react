@@ -1,6 +1,10 @@
 import ko from "knockout";
 import { StatelessComponent, ComponentClass, Component, PureComponent, ReactNode } from "react";
 
+/**
+ * HOC-implementation of a knockout-react bridge.
+ * @deprecated in favor of the hooks API, which is less invasive
+ */
 export default function observe<P>(componentClass: StatelessComponent<P> | ComponentClass<P>) {
     if(isStatelessComponent<P>(componentClass)) {
         componentClass = componentClassForStatelessComponent(componentClass);

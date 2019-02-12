@@ -6,6 +6,10 @@ function useForceUpdate() {
     return () => setIncr(incr + 1);
 }
 
+/**
+ * Reads and subscribes to the value of a single observable,
+ *  triggering a rerender if the value inside the observable changes
+ */
 function useObservable<T>(observable: KnockoutObservable<T>): [T, (t: T) => void];
 function useObservable<T>(observable: KnockoutReadonlyObservable<T>): [T];
 function useObservable<T>(observable: KnockoutObservable<T> | KnockoutReadonlyObservable<T>) {
