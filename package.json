@@ -1,7 +1,7 @@
 {
   "name": "@retsam/ko-react",
   "version": "0.4.0",
-  "description": "A utility library for using knockout observables with react views",
+  "description": "React bindings for Knockout",
   "main": "dist/bundle.js",
   "typings": "dist/index.d.ts",
   "scripts": {

@@ -1,3 +1,9 @@
+# ko-react ![](https://img.shields.io/npm/types/@retsam/ko-react.svg?style=flat)
+
+```
+npm install @retsam/ko-react
+```
+
 A library for allowing Knockout observables to be used with React components.  Knockout's observable system is very similar to MobX, so in practice this is very much like using `mobx-react`.
 
 This intended as a migration path for legacy Knockout codebases - the knockout html template engine can be replaced  with React templates, while leaving the core Knockout logic intact, allowing for an incremental migration path to React.
