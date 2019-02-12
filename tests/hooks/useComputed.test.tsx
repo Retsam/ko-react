@@ -1,5 +1,5 @@
 import ko from "knockout";
-import React from "react";
+import React, { useState } from "react";
 import { act } from "react-dom/test-utils";
 import useComputed from "../../src/hooks/useComputed";
 import { mount } from "../enzyme";
@@ -45,3 +45,18 @@ test("doesn't call the render or computed function unnecessarily", () => {
     expect(computedCount).toBe(2);
 
 });
+
+test("can be used with non-observable state" , () => {
+    const Counter = () => {
+        const [count, setCount] = useState(0);
+        return useComputed(() => (
+            <div onClick={() => setCount(count + 1)}>Value is {count}</div>
+        ), [count]);
+    };
+    const element = mount(<Counter />);
+    act(() => {
+        element.simulate('click');
+    });
+    expect(element.text()).toBe("Value is 1");
+
+})
