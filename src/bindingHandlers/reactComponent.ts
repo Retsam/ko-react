@@ -51,4 +51,4 @@ const registrars = {
     },
 };
 
-export default { ...bindingHandler, ...registrars};
+export default { bindingHandler, ...registrars};
