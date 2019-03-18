@@ -8,7 +8,7 @@ A library for allowing Knockout observables to be used with React components.  K
 
 This intended as a migration path for legacy Knockout codebases - the knockout html template engine can be replaced  with React templates, while leaving the core Knockout logic intact, allowing for an incremental migration path to React.
 
-This library provides utilities for allowing React components to rerender, driven by observables (like MobX), and a bindingHandler to bridge from ko templates to react components.  (There is not currently any provided mechanism for the reverse: rendering knockout templates from react components)
+This library provides utilities for allowing React components to rerender, driven by observables (like MobX), and a bindingHandler to bridge from ko templates to react components.  There is preliminary support for the reverse - react components to knockout logic - in the form of the `useKnockoutBindings` hook.
 
 ## API
 
@@ -53,6 +53,28 @@ const Greeter = ({firstName, lastName}: FullNameProps) => {
         </span>
     );
 }
+```
+
+#### 🚧 `useKnockoutBindings` 🚧
+
+While the rest of this library is concerned with bridging from knockout to react, this bindingHandler
+provides a mechanism for leveraging knockout nested inside of react.
+
+```tsx
+const MessageComponent = ({text}: {text: string}) => {
+    const elementRef = useRef<HTMLDivElement>(null);
+
+    const viewModel = { name: text };
+    useKnockoutBindings(elementRef, viewModel);
+
+    return (
+        // Ref of the element where knockout bindings will be applied
+        <div ref={elementRef}>
+            // Standard knockout data-binding
+            Hello, <span data-bind="text: name" />
+        </div>
+    );
+};
 ```
 
 ### Higher Order Component - `observe`
