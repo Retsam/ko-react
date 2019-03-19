@@ -77,6 +77,8 @@ const MessageComponent = ({text}: {text: string}) => {
 };
 ```
 
+There's some danger here about React and Knockout both trying to control the same elements: it's likely safest to not use this hook directly, but to use the provided `KnockoutTemplate` component, which wraps this hook to provide a React version of the template bindingHandler.
+
 ### Higher Order Component - `observe`
 
 A Higher Order Component which wraps a component such that any observables that are read during the render function will cause the component to rerender.
