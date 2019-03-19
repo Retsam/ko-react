@@ -5,3 +5,4 @@ export {default as reactComponentBindingHandler} from "./bindingHandlers/reactCo
 
 // React to KO
 export {default as useKnockoutBindings} from "./reactToKnockout/useKnockoutBindings";
+export {default as KnockoutTemplate} from "./reactToKnockout/KnockoutTemplate";
