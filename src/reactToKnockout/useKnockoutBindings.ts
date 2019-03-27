@@ -16,6 +16,6 @@ const useKnockoutBindings = (elementRef: RefObject<HTMLElement>, vm: any) => {
         if(!el) throw new Error("Expected to have an element in the ref");
         ko.applyBindings(vmObservable, el);
 
-    }, [elementRef]); // Maybe should be elementRef.current... but causes bindings to be reapplied
+    }, [elementRef]);
 };
 export default useKnockoutBindings;
