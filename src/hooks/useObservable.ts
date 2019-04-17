@@ -1,4 +1,4 @@
-import ko from "knockout";
+import ko, { Observable } from "knockout";
 import { useState, useLayoutEffect } from "react";
 
 function useForceUpdate() {
@@ -10,9 +10,7 @@ function useForceUpdate() {
  * Reads and subscribes to the value of a single observable,
  *  triggering a rerender if the value inside the observable changes
  */
-function useObservable<T>(observable: KnockoutObservable<T>): [T, (t: T) => void];
-function useObservable<T>(observable: KnockoutReadonlyObservable<T>): [T];
-function useObservable<T>(observable: KnockoutObservable<T> | KnockoutReadonlyObservable<T>) {
+function useObservable<T>(observable: Pick<Observable<T>, "subscribe" | "peek">) {
     const forceUpdate = useForceUpdate();
     // Doing useLayoutEffect so that the subscription happens synchronously with the initial render;
     // eliminates a window in which the observable can go out of sync with the state

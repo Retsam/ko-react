@@ -15,7 +15,6 @@
   "author": "Retsam19",
   "license": "ISC",
   "dependencies": {
-    "@types/knockout": "^3.4.63",
     "@types/react": "^16.8.2",
     "@types/react-dom": "^16.8.0"
   },
@@ -27,7 +26,7 @@
     "enzyme-adapter-react-16": "^1.7.1",
     "husky": "^1.3.1",
     "jest": "^22.4.3",
-    "knockout": "3.x",
+    "knockout": "~3.5.0",
     "react": "^16.7.0",
     "react-dom": "^16.8.0",
     "rollup": "^0.58.2",
@@ -38,7 +37,7 @@
     "typescript": "^2.8.3"
   },
   "peerDependencies": {
-    "knockout": "3.x",
+    "knockout": "^3.5.0",
     "react": "^16.7.0",
     "react-dom": "^16.8.0"
   },

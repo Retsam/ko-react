@@ -1,4 +1,4 @@
-import ko from "knockout";
+import ko, { Computed } from "knockout";
 import { StatelessComponent, ComponentClass, Component, PureComponent, ReactNode } from "react";
 
 /**
@@ -11,7 +11,7 @@ export default function observe<P>(componentClass: StatelessComponent<P> | Compo
     }
 
     return (class extends componentClass {
-        private __ko_react_computed?: KnockoutComputed<ReactNode>; // tslint:disable-line variable-name
+        private __ko_react_computed?: Computed<ReactNode>; // tslint:disable-line variable-name
 
         // Override the render function with one that uses a computed to track observables
         render() {

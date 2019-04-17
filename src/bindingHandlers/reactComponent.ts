@@ -1,4 +1,4 @@
-import ko from "knockout";
+import ko, { BindingHandler } from "knockout";
 import React, { ComponentClass } from "react";
 import ReactDOM from "react-dom";
 
@@ -9,7 +9,7 @@ export interface ReactComponentBindingValue {
     params?: any;
 }
 
-const bindingHandler: KnockoutBindingHandler<HTMLElement, ReactComponentBindingValue> = {
+const bindingHandler: BindingHandler<ReactComponentBindingValue> = {
     init(element) {
         ko.utils.domNodeDisposal.addDisposeCallback(element, () => ReactDOM.unmountComponentAtNode(element));
         return { controlsDescendantBindings: true };
