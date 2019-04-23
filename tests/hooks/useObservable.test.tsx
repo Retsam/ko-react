@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import useObservable, { KnockoutReadonlyObservable } from "../../src/hooks/useObservable";
 import { mount } from "../enzyme";
 import { act } from "react-dom/test-utils";
+import { exact } from "prop-types";
 
 test("can read from an observable", () => {
     const Component = ({text: textObservable}: { text: KnockoutObservable<string> }) => {
@@ -16,6 +17,10 @@ test("can read from an observable", () => {
         text("James");
     });
     expect(element.text()).toBe("James");
+    act(() => {
+        text("Jack");
+    });
+    expect(element.text()).toBe("Jack");
 });
 
 test("can write to an observable", () => {
