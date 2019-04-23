@@ -8,7 +8,7 @@ import useMemoWithDisposer from "hooks/utils/useMemoWithDisposer";
  * @param func A pure function that reads observables to produce a value,
  *      (does not need to be a ko.computed, and probably shouldn't be)
  */
-function useComputed<T>(func: () => T, deps?: any[]) {
+function useComputed<T>(func: () => T, deps: any[] | undefined) {
     const forceUpdate = useForceUpdate();
     const computed = useMemoWithDisposer(
         () => {
