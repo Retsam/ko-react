@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/knockout": "^3.4.63",
-    "@types/react": "^16.8.2",
+    "@types/react": "^16.8.14",
     "@types/react-dom": "^16.8.0"
   },
   "devDependencies": {
