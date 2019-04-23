@@ -2,8 +2,9 @@ import ko from "knockout";
 import { useState, useLayoutEffect } from "react";
 
 function useForceUpdate() {
-    const [incr, setIncr] = useState(0);
-    return () => setIncr(incr + 1);
+    const [/*val*/, setIncr] = useState(0);
+    // Using callback form of setIncr so that the same useForceUpdate function can be called multiple times
+    return () => setIncr((val) => val + 1);
 }
 
 /**
