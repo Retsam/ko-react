@@ -6,11 +6,15 @@ function useForceUpdate() {
     return () => setIncr((val) => val + 1);
 }
 
+// Building this type so that this hook can be used with computeds, or observables that have been
+//  cast to be readonly
+type ReadonlyObservable<T> = Pick<KnockoutObservable<T>, "subscribe" | "peek">;
+
 /**
  * Reads and subscribes to the value of a single observable,
  *  triggering a rerender if the value inside the observable changes
  */
-function useObservable<T>(observable: KnockoutObservable<T>) {
+function useObservable<T>(observable: ReadonlyObservable<T>) {
     const forceUpdate = useForceUpdate();
     // Doing useLayoutEffect so that the subscription happens synchronously with the initial render;
     // eliminates a window in which the observable can go out of sync with the state
