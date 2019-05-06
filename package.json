@@ -1,6 +1,6 @@
 {
   "name": "@retsam/ko-react",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "React bindings for Knockout",
   "main": "dist/bundle.js",
   "typings": "dist/index.d.ts",
