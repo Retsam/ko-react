@@ -13,7 +13,7 @@
     "prepare": "npm run test && npm run build"
   },
   "author": "Retsam19",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@types/knockout": "^3.4.63"
   },
