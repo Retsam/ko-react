@@ -4,6 +4,9 @@
   "description": "React bindings for Knockout",
   "main": "dist/bundle.js",
   "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup -c",
     "prelint": "echo 'Running linter...'",
