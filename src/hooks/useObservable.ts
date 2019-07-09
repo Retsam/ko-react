@@ -1,10 +1,5 @@
-import { useState, useLayoutEffect } from "react";
-
-function useForceUpdate() {
-    const [/*val*/, setIncr] = useState(0);
-    // Using callback form of setIncr so that the same useForceUpdate function can be called multiple times
-    return () => setIncr((val) => val + 1);
-}
+import useSubscription from "hooks/useSubscription";
+import useForceUpdate from "hooks/utils/useForceUpdate";
 
 // Building this type so that this hook can be used with computeds, or observables that have been
 //  cast to be readonly
@@ -15,13 +10,7 @@ export type ReadonlyObservable<T> = Pick<KnockoutObservable<T>, "subscribe" | "p
  *  triggering a rerender if the value inside the observable changes
  */
 function useObservable<T>(observable: ReadonlyObservable<T>) {
-    const forceUpdate = useForceUpdate();
-    // Doing useLayoutEffect so that the subscription happens synchronously with the initial render;
-    // eliminates a window in which the observable can go out of sync with the state
-    useLayoutEffect(() => {
-        const sub = observable.subscribe(forceUpdate);
-        return () => sub.dispose();
-    }, [observable]);
+    useSubscription(observable, useForceUpdate());
 
     return observable.peek();
 }
