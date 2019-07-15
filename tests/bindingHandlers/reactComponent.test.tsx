@@ -65,7 +65,9 @@ test("props can contain an observable", () => {
     `, vm);
     expect(element.textContent).toBe("Hello, John");
     vm.props.name("Jonny");
-    expect(element.textContent).toBe("Hello, Jonny");
+    // Still John, because changing observables only causes rerenders if
+    //   wrapped in useObserve, useComputed, etc.
+    expect(element.textContent).toBe("Hello, John");
 });
 
 test("renders the component with shorthand notation", () => {
