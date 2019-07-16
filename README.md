@@ -76,53 +76,9 @@ const PageTitleComponent = ({}) => {
 }
 ```
 
-#### 🚧 `useKnockoutBindings` 🚧
-
-While the rest of this library is concerned with bridging from knockout to react, this bindingHandler
-provides a mechanism for leveraging knockout nested inside of react.
-
-```tsx
-const MessageComponent = ({text}: {text: string}) => {
-    const elementRef = useRef<HTMLDivElement>(null);
-
-    const viewModel = { name: text };
-    useKnockoutBindings(elementRef, viewModel);
-
-    return (
-        // Ref of the element where knockout bindings will be applied
-        <div ref={elementRef}>
-            // Standard knockout data-binding
-            Hello, <span data-bind="text: name" />
-        </div>
-    );
-};
-```
-
-There's some danger here about React and Knockout both trying to control the same elements: it's likely safest to not use this hook directly, but to use the provided `KnockoutTemplate` component, which wraps this hook to provide a React version of the template bindingHandler.
-
-### Higher Order Component - `observe`
-
-A Higher Order Component which wraps a component such that any observables that are read during the render function will cause the component to rerender.
-
-```tsx
-interface FullNameProps {
-    firstName: KnockoutObservable<string>,
-    lastName: KnockoutObservable<string>
-}
-
-// Re-renders if either firstName or lastName change
-const Greeter = observe(({firstName, lastName}: FullNameProps) => (
-    <span>
-        Hello, {firstName()} {lastName()}
-    </span>
-));
-```
-
-The implementation details of `observe` however, are somewhat ugly, and it should be considered deprecated in favor of the hooks API.
-
 ### Knockout bindingHandler `reactComponent`
 
-Used to bridge from "knockout world" into React world, useful for incrementally migrating from knockout templates to React components.
+Used to host a react tree inside a Knockout app, useful for incrementally migrating from knockout templates to React components.
 
 ```html
 <div data-bind="
@@ -146,3 +102,71 @@ If `registerShorthandSyntax` is called, knockout `preprocessNode` logic will be 
 ```
 
 This will insert a `div` and render `MyComponent` inside it.
+
+### React to Knockout
+
+While the majority of this library is aimed at hosting React trees inside of Knockout, the reverse may be useful (primarily for migration purposes), so a few utilities are provided for that purpose:
+
+#### 🚧 `useKnockoutBindings` 🚧
+
+This hook takes an element ref and a set of knockout bindings and applies those bindings to the element.
+
+```tsx
+const MessageComponent = ({text}: {text: string}) => {
+    const elementRef = useRef<HTMLDivElement>(null);
+
+    const viewModel = { name: text };
+    useKnockoutBindings(elementRef, viewModel);
+
+    return (
+        // Ref of the element where knockout bindings will be applied
+        <div ref={elementRef}>
+            // Standard knockout data-binding
+            Hello, <span data-bind="text: name" />
+        </div>
+    );
+};
+```
+
+⚠ Caveats:
+
+* This hook assumes that the ref is stable: if the ref is pointed from one element to a different the bindings won't be reapplied to the new element.
+
+* Currently no mechanism for setting knockout context, in a Knockout -> React -> Knockout situation, the inner knockout tree won't have access to the outer knockout tree's context.  Consider applying the `let` binding if this is necessary.
+
+* There's some danger here about React and Knockout both trying to control the same elements: it's likely safest to not use this hook directly, but to use the provided `KnockoutTemplate` component, which wraps this hook to provide a React version of the template bindingHandler.
+
+#### KnockoutTemplate
+
+A React component which takes a knockout template and data as props, and renders that template inside a <div>.  Currently the safest way to host knockout content inside a React tree.
+
+```tsx
+const KnockoutGreeter = ({firstName, lastName}) => (
+    <KnockoutTemplate
+        name="knockoutGreeterTemplate"
+        data={{firstName, lastName}}
+    />
+);
+```
+
+⚠️ NOTE: the same caveat about context from `useKnockoutBindings` applies here.
+
+### Higher Order Component - `observe`
+
+A Higher Order Component which wraps a component such that any observables that are read during the render function will cause the component to rerender.
+
+```tsx
+interface FullNameProps {
+    firstName: KnockoutObservable<string>,
+    lastName: KnockoutObservable<string>
+}
+
+// Re-renders if either firstName or lastName change
+const Greeter = observe(({firstName, lastName}: FullNameProps) => (
+    <span>
+        Hello, {firstName()} {lastName()}
+    </span>
+));
+```
+
+The implementation details of `observe` however, are somewhat ugly, and it should be considered deprecated in favor of the hooks API.
