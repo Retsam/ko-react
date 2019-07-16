@@ -55,6 +55,27 @@ const Greeter = ({firstName, lastName}: FullNameProps) => {
 }
 ```
 
+#### `useSubscription`
+
+Sets up a subscription to an observable (or any subscribable) - runs the provided callback whenever the observable emits a new value, without triggering a rerender (unless the callback modifies state).  Disposes the subscription when the component is unmounted.
+
+```ts
+type PageTitleComponentProps = {
+    text: KnockoutObservable<string>,
+    prefix: string,
+}
+const PageTitleComponent = ({}) => {
+    const [count, setCount] = useState(0);
+
+    useSubscription(text, newText => {
+        // count will always be the latest value, no need for a `deps` array.
+        document.title = `${count} - ${newText}`
+    });
+
+    return <button onClick={() => setCount(count + 1)}>Click</button>;
+}
+```
+
 #### 🚧 `useKnockoutBindings` 🚧
 
 While the rest of this library is concerned with bridging from knockout to react, this bindingHandler
