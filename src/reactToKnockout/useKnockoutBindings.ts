@@ -10,7 +10,10 @@ import { RefObject, useLayoutEffect, useMemo } from "react";
 const useKnockoutBindings = (elementRef: RefObject<HTMLElement>, vm: any) => {
     const vmObservable = useMemo(() => ko.observable<any>(), []);
 
-    vmObservable(vm);
+    // Set (or update) the vm;
+    // with useLayoutEffect to avoid side-effects in the render function
+    useLayoutEffect(() => { vmObservable(vm); }, [vm]);
+    // Apply bindings
     useLayoutEffect(() => {
         const el = elementRef.current;
         if(!el) throw new Error("Expected to have an element in the ref");
