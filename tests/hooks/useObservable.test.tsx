@@ -22,6 +22,25 @@ test("can read from an observable", () => {
     expect(element.text()).toBe("Jack");
 });
 
+test("can read from a computed", () => {
+    const Component = ({text: textComputed}: { text: KnockoutComputed<string> }) => {
+        const text = useObservable(textComputed);
+        return <h1>{text}</h1>;
+    };
+    const firstName = ko.observable("Joe");
+    const lastName = ko.observable("Smith");
+    const fullName = ko.computed(() => `${firstName()} ${lastName()}`);
+
+    const element = mount(<Component text={fullName} />);
+
+    expect(element.text()).toBe("Joe Smith");
+
+    act(() => {
+        lastName("Danger");
+    });
+    expect(element.text()).toBe("Joe Danger");
+});
+
 test("behaves appropriately if the observable is swapped for a different observable", () => {
     const Child = ({count}: { count: KnockoutObservable<number> }) => {
         const countValue = useObservable(count);
