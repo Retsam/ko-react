@@ -52,3 +52,20 @@ test("behaves appropriately if the observable is swapped for a different observa
     });
     expect(element.text()).toBe("2");
 });
+
+test("handles rateLimited computeds", () => {
+    const obs = ko.observable(1);
+
+    const rateLimited = ko.computed(() => {
+        return obs() + 1;
+    }).extend({rateLimit: 1000});
+
+    const Component = () => {
+        // Should force `rateLimited` to read the new value, despite the `rateLimit`.
+        const value = useObservable(rateLimited);
+        return <div>{value}</div>;
+    };
+    obs(2);
+    const element = mount(<Component/>);
+    expect(element.text()).toBe("3");
+});

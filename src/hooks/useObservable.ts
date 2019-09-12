@@ -12,7 +12,9 @@ export type ReadonlyObservable<T> = Pick<KnockoutObservable<T>, "subscribe" | "p
 function useObservable<T>(observable: ReadonlyObservable<T>) {
     useSubscription(observable, useForceUpdate());
 
-    return observable.peek();
+    // Passing undocument `true` option to `observable.peek` to force it to read the latest value
+    // from the observable, even if it's been rate-limited.
+    return (observable.peek as any)(true) as T;
 }
 
 export default useObservable;
