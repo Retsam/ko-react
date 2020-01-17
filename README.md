@@ -83,7 +83,7 @@ Used to host a react tree inside a Knockout app, useful for incrementally migrat
 ```html
 <div data-bind="
     reactComponent: {
-        component: MyComponent,
+        Component: MyComponent,
         props: {prop: 'propValue'}
     }
 "><!-- MyComponent will render here --></div>
