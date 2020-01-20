@@ -46,7 +46,7 @@ interface FullNameProps {
 
 // Re-renders only if firstName changes
 const Greeter = ({firstName, lastName}: FullNameProps) => {
-    const [fName] = useObservable(firstName)
+    const fName = useObservable(firstName)
     return (
         <span>
             Hello, {fName} {lastName()}
