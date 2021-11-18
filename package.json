@@ -42,8 +42,8 @@
   },
   "peerDependencies": {
     "knockout": "3.x",
-    "react": "^16.7.0",
-    "react-dom": "^16.8.0"
+    "react": "16 - 17",
+    "react-dom": "16 - 17"
   },
   "repository": "github:Retsam/ko-react",
   "husky": {
