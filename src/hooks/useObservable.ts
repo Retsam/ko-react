@@ -18,6 +18,7 @@ function useObservable<T>(observable: ReadonlyObservable<T>) {
         return (observable.peek as any)(true) as T;
     } catch(e) {
         // The errors seem to get swallowed somewhere in the React machinery, so log them here
+        //  (A normal observable probably won't throw an error, but 'the 'observable' might actually be computed)
         // tslint:disable-next-line
         console.error("An error occurred while reading an observable", e);
         throw e;
