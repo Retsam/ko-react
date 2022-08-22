@@ -13,7 +13,9 @@ export default function useMemoWithDisposer<T>(
     useEffect(() => () => disposer(memoizedVal.current!), []);
 
     return useMemo(() => {
-        if(memoizedVal.current) { disposer(memoizedVal.current); }
-        return memoizedVal.current = memoizer();
+        if (memoizedVal.current) {
+            disposer(memoizedVal.current);
+        }
+        return (memoizedVal.current = memoizer());
     }, deps);
 }

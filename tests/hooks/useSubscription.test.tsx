@@ -47,8 +47,8 @@ test("correctly handles closure state inside callbacks", () => {
     const callbackFn = jest.fn();
     const subscribable = new ko.subscribable<string>();
 
-    const Component = ({prop}: {prop: string}) => {
-        useSubscription(subscribable, (value) => {
+    const Component = ({ prop }: { prop: string }) => {
+        useSubscription(subscribable, value => {
             // Passes the current value of prop to the callback
             callbackFn(`${value} ${prop}`);
         });
@@ -60,7 +60,7 @@ test("correctly handles closure state inside callbacks", () => {
     expect(callbackFn).toHaveBeenCalledTimes(1);
     expect(callbackFn).toHaveBeenCalledWith("foo initial");
 
-    element.setProps({prop: "updated"});
+    element.setProps({ prop: "updated" });
 
     subscribable.notifySubscribers("bar");
     expect(callbackFn).toHaveBeenCalledTimes(2);
@@ -70,7 +70,7 @@ test("correctly handles closure state inside callbacks", () => {
 test("correctly handles the observable being changed", () => {
     const callbackFn = jest.fn();
 
-    const Component = ({sub}: { sub: KnockoutSubscribable<void>; }) => {
+    const Component = ({ sub }: { sub: KnockoutSubscribable<void> }) => {
         useSubscription(sub, callbackFn);
         return <></>;
     };
@@ -89,7 +89,7 @@ test("correctly handles the observable being changed", () => {
     expect(callbackFn).toHaveBeenCalledTimes(1);
 
     // Swap the subscribable
-    element.setProps({sub: sub2});
+    element.setProps({ sub: sub2 });
 
     // Does not trigger the callback
     sub1.notifySubscribers();

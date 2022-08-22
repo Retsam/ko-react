@@ -16,7 +16,7 @@ function useComputed<T>(func: () => T, deps: any[] | undefined) {
             c.subscribe(forceUpdate);
             return c;
         },
-        (computed) => computed.dispose(),
+        computed => computed.dispose(),
         deps,
     );
     return computed();

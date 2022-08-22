@@ -6,20 +6,23 @@ import { setupKoTest } from "../koTestUtils";
 reactComponentBindingHandler.register();
 reactComponentBindingHandler.registerShorthandSyntax();
 
-const Greeter = ({name = "World"}: {name: string}) => (
+const Greeter = ({ name = "World" }: { name: string }) => (
     <div>Hello, {name}</div>
 );
-const ObservableGreeter = ({name}: {name: KnockoutObservable<string>}) => ( // tslint:disable-line variable-name
-    <div>Hello, {name()}</div>
-);
+const ObservableGreeter = (
+    { name }: { name: KnockoutObservable<string> }, // tslint:disable-line variable-name
+) => <div>Hello, {name()}</div>;
 
 test("renders the component", () => {
     const vm = {
         Greeter,
     };
-    const element = setupKoTest(`
+    const element = setupKoTest(
+        `
         <div data-bind="reactComponent: { Component: Greeter }"></div>
-    `, vm);
+    `,
+        vm,
+    );
     expect(element.textContent).toBe("Hello, World");
 });
 
@@ -27,9 +30,12 @@ test("accepts props", () => {
     const vm = {
         Greeter,
     };
-    const element = setupKoTest(`
+    const element = setupKoTest(
+        `
         <div data-bind="reactComponent: { Component: Greeter, props: { name: 'Mark' } }"></div>
-    `, vm);
+    `,
+        vm,
+    );
     expect(element.textContent).toBe("Hello, Mark");
 });
 
@@ -37,22 +43,28 @@ test("accepts params for backwards compatibility", () => {
     const vm = {
         Greeter,
     };
-    const element = setupKoTest(`
+    const element = setupKoTest(
+        `
         <div data-bind="reactComponent: { Component: Greeter, params: { name: 'Mark' } }"></div>
-    `, vm);
+    `,
+        vm,
+    );
     expect(element.textContent).toBe("Hello, Mark");
 });
 
 test("props can be an observable", () => {
     const vm = {
         Greeter,
-        props: ko.observable({name: "Susan"}),
+        props: ko.observable({ name: "Susan" }),
     };
-    const element = setupKoTest(`
+    const element = setupKoTest(
+        `
         <div data-bind="reactComponent: { Component: Greeter, props: props }"></div>
-    `, vm);
+    `,
+        vm,
+    );
     expect(element.textContent).toBe("Hello, Susan");
-    vm.props({name: "Susie"});
+    vm.props({ name: "Susie" });
     expect(element.textContent).toBe("Hello, Susie");
 });
 test("props can contain an observable", () => {
@@ -60,9 +72,12 @@ test("props can contain an observable", () => {
         ObservableGreeter,
         props: { name: ko.observable("John") },
     };
-    const element = setupKoTest(`
+    const element = setupKoTest(
+        `
         <div data-bind="reactComponent: { Component: ObservableGreeter, props: props }"></div>
-    `, vm);
+    `,
+        vm,
+    );
     expect(element.textContent).toBe("Hello, John");
     vm.props.name("Jonny");
     // Still John, because changing observables only causes rerenders if
@@ -74,8 +89,11 @@ test("renders the component with shorthand notation", () => {
     const vm = {
         Greeter,
     };
-    const element = setupKoTest(`
+    const element = setupKoTest(
+        `
         <div><!-- react: Greeter {name: "Joe"} --></div>
-    `, vm);
+    `,
+        vm,
+    );
     expect(element.textContent).toBe("Hello, Joe");
 });
