@@ -1,23 +1,15 @@
 {
     "defaultSeverity": "error",
-    "extends": [
-        "tslint:recommended"
-    ],
+    "extends": ["tslint:recommended"],
     "rulesDirectory": "node_modules/tslint-microsoft-contrib",
     "rules": {
         "arrow-parens": false,
-        "curly": [ true, "ignore-same-line"],
-        "indent": [
-            true,
-            "spaces", 4
-        ],
+        "curly": [true, "ignore-same-line"],
+        "indent": [true, "spaces", 4],
         "interface-name": false,
         "max-classes-per-file": false,
         "max-line-length": false,
-        "member-access": [
-            true,
-            "no-public"
-        ],
+        "member-access": [true, "no-public"],
         "member-ordering": false,
         "no-consecutive-blank-lines": false,
         "no-relative-imports": true,

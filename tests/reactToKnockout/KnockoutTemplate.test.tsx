@@ -23,14 +23,13 @@ const greeterTemplate = buildTemplateElement(
     `Hello, <span data-bind="text: name"></span>`,
 );
 
-
 let container: HTMLDivElement;
 beforeEach(() => {
     document.body.appendChild(helloWorldTemplate);
     document.body.appendChild(greeterTemplate);
-    container = document.createElement('div');
+    container = document.createElement("div");
     document.body.appendChild(container);
-  });
+});
 
 afterEach(() => {
     document.body.removeChild(helloWorldTemplate);
@@ -41,22 +40,26 @@ afterEach(() => {
 
 test("Can render a template without data", () => {
     act(() => {
-        ReactDOM.render(<KnockoutTemplate
-            name={helloWorldTemplateId}
-        />, container);
+        ReactDOM.render(
+            <KnockoutTemplate name={helloWorldTemplateId} />,
+            container,
+        );
     });
 
-    const element = container.querySelector('div');
-    expect(element.textContent).toBe('Hello, World');
+    const element = container.querySelector("div");
+    expect(element.textContent).toBe("Hello, World");
 });
 
 test("Can render templates with data", () => {
     act(() => {
-        ReactDOM.render(<KnockoutTemplate
-            name={greeterTemplateId}
-            data={{name: "Mark"}}
-        />, container);
+        ReactDOM.render(
+            <KnockoutTemplate
+                name={greeterTemplateId}
+                data={{ name: "Mark" }}
+            />,
+            container,
+        );
     });
-    const element = container.querySelector('div');
-    expect(element.textContent).toBe('Hello, Mark');
+    const element = container.querySelector("div");
+    expect(element.textContent).toBe("Hello, Mark");
 });

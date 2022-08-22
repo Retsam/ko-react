@@ -4,11 +4,11 @@
 npm install @retsam/ko-react
 ```
 
-A library for allowing Knockout observables to be used with React components.  Knockout's observable system is very similar to MobX, so in practice this is very much like using `mobx-react`.
+A library for allowing Knockout observables to be used with React components. Knockout's observable system is very similar to MobX, so in practice this is very much like using `mobx-react`.
 
-This intended as a migration path for legacy Knockout codebases - the knockout html template engine can be replaced  with React templates, while leaving the core Knockout logic intact, allowing for an incremental migration path to React.
+This intended as a migration path for legacy Knockout codebases - the knockout html template engine can be replaced with React templates, while leaving the core Knockout logic intact, allowing for an incremental migration path to React.
 
-This library provides utilities for allowing React components to rerender, driven by observables (like MobX), and a bindingHandler to bridge from ko templates to react components.  There is preliminary support for the reverse - react components to knockout logic - in the form of the `useKnockoutBindings` hook.
+This library provides utilities for allowing React components to rerender, driven by observables (like MobX), and a bindingHandler to bridge from ko templates to react components. There is preliminary support for the reverse - react components to knockout logic - in the form of the `useKnockoutBindings` hook.
 
 ## API
 
@@ -20,16 +20,17 @@ A hook version of `ko.pureComputed`, wraps a function, returns the value of eval
 
 ```tsx
 interface FullNameProps {
-    firstName: KnockoutObservable<string>,
-    lastName: KnockoutObservable<string>
+    firstName: KnockoutObservable<string>;
+    lastName: KnockoutObservable<string>;
 }
 
 // Re-renders if either firstName or lastName change
-const Greeter = ({firstName, lastName}: FullNameProps) => useComputed(() => (
-    <span>
-        Hello, {firstName()} {lastName()}
-    </span>
-));
+const Greeter = ({ firstName, lastName }: FullNameProps) =>
+    useComputed(() => (
+        <span>
+            Hello, {firstName()} {lastName()}
+        </span>
+    ));
 ```
 
 Can largely be used as a drop-in replacement for the `observe` HOC.
@@ -40,40 +41,40 @@ Reads and subscribes to an observable - if the observable's value changes the co
 
 ```tsx
 interface FullNameProps {
-    firstName: KnockoutObservable<string>,
-    lastName: KnockoutObservable<string>
+    firstName: KnockoutObservable<string>;
+    lastName: KnockoutObservable<string>;
 }
 
 // Re-renders only if firstName changes
-const Greeter = ({firstName, lastName}: FullNameProps) => {
-    const fName = useObservable(firstName)
+const Greeter = ({ firstName, lastName }: FullNameProps) => {
+    const fName = useObservable(firstName);
     return (
         <span>
             Hello, {fName} {lastName()}
         </span>
     );
-}
+};
 ```
 
 #### `useSubscription`
 
-Sets up a subscription to an observable (or any subscribable) - runs the provided callback whenever the observable emits a new value, without triggering a rerender (unless the callback modifies state).  Disposes the subscription when the component is unmounted.
+Sets up a subscription to an observable (or any subscribable) - runs the provided callback whenever the observable emits a new value, without triggering a rerender (unless the callback modifies state). Disposes the subscription when the component is unmounted.
 
 ```ts
 type PageTitleComponentProps = {
-    text: KnockoutObservable<string>,
-    prefix: string,
-}
+    text: KnockoutObservable<string>;
+    prefix: string;
+};
 const PageTitleComponent = ({}) => {
     const [count, setCount] = useState(0);
 
     useSubscription(text, newText => {
         // count will always be the latest value, no need for a `deps` array.
-        document.title = `${count} - ${newText}`
+        document.title = `${count} - ${newText}`;
     });
 
     return <button onClick={() => setCount(count + 1)}>Click</button>;
-}
+};
 ```
 
 ### Knockout bindingHandler `reactComponent`
@@ -81,12 +82,16 @@ const PageTitleComponent = ({}) => {
 Used to host a react tree inside a Knockout app, useful for incrementally migrating from knockout templates to React components.
 
 ```html
-<div data-bind="
+<div
+    data-bind="
     reactComponent: {
         Component: MyComponent,
         props: {prop: 'propValue'}
     }
-"><!-- MyComponent will render here --></div>
+"
+>
+    <!-- MyComponent will render here -->
+</div>
 ```
 
 Must be registered in `ko.bindingHandlers`, can be done by calling the exported `register` function.
@@ -112,7 +117,7 @@ While the majority of this library is aimed at hosting React trees inside of Kno
 This hook takes an element ref and a set of knockout bindings and applies those bindings to the element.
 
 ```tsx
-const MessageComponent = ({text}: {text: string}) => {
+const MessageComponent = ({ text }: { text: string }) => {
     const elementRef = useRef<HTMLDivElement>(null);
 
     const viewModel = { name: text };
@@ -121,8 +126,8 @@ const MessageComponent = ({text}: {text: string}) => {
     return (
         // Ref of the element where knockout bindings will be applied
         <div ref={elementRef}>
-            // Standard knockout data-binding
-            Hello, <span data-bind="text: name" />
+            // Standard knockout data-binding Hello,{" "}
+            <span data-bind="text: name" />
         </div>
     );
 };
@@ -130,21 +135,21 @@ const MessageComponent = ({text}: {text: string}) => {
 
 ⚠ Caveats:
 
-* This hook assumes that the ref is stable: if the ref is pointed from one element to a different the bindings won't be reapplied to the new element.
+-   This hook assumes that the ref is stable: if the ref is pointed from one element to a different the bindings won't be reapplied to the new element.
 
-* Currently no mechanism for setting knockout context, in a Knockout -> React -> Knockout situation, the inner knockout tree won't have access to the outer knockout tree's context.  Consider applying the `let` binding if this is necessary.
+-   Currently no mechanism for setting knockout context, in a Knockout -> React -> Knockout situation, the inner knockout tree won't have access to the outer knockout tree's context. Consider applying the `let` binding if this is necessary.
 
-* There's some danger here about React and Knockout both trying to control the same elements: it's likely safest to not use this hook directly, but to use the provided `KnockoutTemplate` component, which wraps this hook to provide a React version of the template bindingHandler.
+-   There's some danger here about React and Knockout both trying to control the same elements: it's likely safest to not use this hook directly, but to use the provided `KnockoutTemplate` component, which wraps this hook to provide a React version of the template bindingHandler.
 
 #### KnockoutTemplate
 
-A React component which takes a knockout template and data as props, and renders that template inside a <div>.  Currently the safest way to host knockout content inside a React tree.
+A React component which takes a knockout template and data as props, and renders that template inside a <div>. Currently the safest way to host knockout content inside a React tree.
 
 ```tsx
-const KnockoutGreeter = ({firstName, lastName}) => (
+const KnockoutGreeter = ({ firstName, lastName }) => (
     <KnockoutTemplate
         name="knockoutGreeterTemplate"
-        data={{firstName, lastName}}
+        data={{ firstName, lastName }}
     />
 );
 ```
@@ -157,12 +162,12 @@ A Higher Order Component which wraps a component such that any observables that 
 
 ```tsx
 interface FullNameProps {
-    firstName: KnockoutObservable<string>,
-    lastName: KnockoutObservable<string>
+    firstName: KnockoutObservable<string>;
+    lastName: KnockoutObservable<string>;
 }
 
 // Re-renders if either firstName or lastName change
-const Greeter = observe(({firstName, lastName}: FullNameProps) => (
+const Greeter = observe(({ firstName, lastName }: FullNameProps) => (
     <span>
         Hello, {firstName()} {lastName()}
     </span>

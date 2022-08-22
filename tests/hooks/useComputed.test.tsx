@@ -5,15 +5,21 @@ import useComputed from "../../src/hooks/useComputed";
 import { mount } from "../enzyme";
 
 test("can compute JSX based on observables", () => {
-    interface ComponentProps { firstName: KnockoutObservable<string>; lastName: KnockoutObservable<string>; }
-    const Component = ({firstName, lastName}: ComponentProps) => (
+    interface ComponentProps {
+        firstName: KnockoutObservable<string>;
+        lastName: KnockoutObservable<string>;
+    }
+    const Component = ({ firstName, lastName }: ComponentProps) =>
         useComputed(() => (
-            <div>{firstName()} {lastName()}</div>
-        ))
-    );
+            <div>
+                {firstName()} {lastName()}
+            </div>
+        ));
     const firstName = ko.observable("Bob");
     const lastName = ko.observable("Ross");
-    const element = mount(<Component firstName={firstName} lastName={lastName} />);
+    const element = mount(
+        <Component firstName={firstName} lastName={lastName} />,
+    );
     expect(element.text()).toBe("Bob Ross");
     act(() => {
         lastName("Jones");
@@ -22,16 +28,16 @@ test("can compute JSX based on observables", () => {
 });
 
 test("doesn't call the render or computed function unnecessarily", () => {
-    interface ComponentProps { c: KnockoutObservable<number>; }
+    interface ComponentProps {
+        c: KnockoutObservable<number>;
+    }
     let renderCount = 0;
     let computedCount = 0;
-    const Component = ({c}: ComponentProps) => {
+    const Component = ({ c }: ComponentProps) => {
         renderCount++;
         return useComputed(() => {
             computedCount++;
-            return (
-            <div>{c()}</div>
-            );
+            return <div>{c()}</div>;
         }, []);
     };
     const count = ko.observable(0);
@@ -45,7 +51,7 @@ test("doesn't call the render or computed function unnecessarily", () => {
     expect(computedCount).toBe(2);
 });
 
-test("can be used with closure values" , () => {
+test("can be used with closure values", () => {
     const Counter = () => {
         const [count, setCount] = useState(0);
         // NOT passing a dependency array: behaves correctly, but may compute more often than necessary
@@ -55,7 +61,7 @@ test("can be used with closure values" , () => {
     };
     const element = mount(<Counter />);
     act(() => {
-        element.simulate('click');
+        element.simulate("click");
     });
     expect(element.text()).toBe("Value is 1");
 });
@@ -63,13 +69,20 @@ test("can be used with closure values" , () => {
 test("doesn't call the render or computed function unnecessarily with deps", () => {
     let renderCount = 0;
     let computedCount = 0;
-    const Counter = ({plus}: {plus: KnockoutObservable<number>}) => {
+    const Counter = ({ plus }: { plus: KnockoutObservable<number> }) => {
         renderCount++;
         const [count, setCount] = useState(0);
-        return useComputed(() => (
-            computedCount++,
-            <div onClick={() => setCount(count + 1)}>Value is {count + plus()}</div>
-        ), [count]);
+        return useComputed(
+            () => (
+                computedCount++,
+                (
+                    <div onClick={() => setCount(count + 1)}>
+                        Value is {count + plus()}
+                    </div>
+                )
+            ),
+            [count],
+        );
     };
     const plus = ko.observable(0);
     const element = mount(<Counter plus={plus} />);
@@ -87,7 +100,7 @@ test("doesn't call the render or computed function unnecessarily with deps", () 
 
     // Update non-observable state
     act(() => {
-        element.simulate('click');
+        element.simulate("click");
     });
     expect(renderCount).toBe(3);
     expect(computedCount).toBe(3);

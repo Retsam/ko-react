@@ -4,19 +4,19 @@ import React from "react";
 import { mount, shallow, StatelessComponent } from "./enzyme";
 
 test("accepts stateless components", () => {
-    const TestComponent = observe(() => (
-        <div>Test</div>
-    ));
+    const TestComponent = observe(() => <div>Test</div>);
     const element = shallow(<TestComponent />);
     expect(element.equals(<div>Test</div>)).toBe(true);
 });
 
 test("accepts component classes", () => {
-    const TestComponent = observe(class extends React.Component {
-        render() {
-            return <div>Test</div>;
-        }
-    });
+    const TestComponent = observe(
+        class extends React.Component {
+            render() {
+                return <div>Test</div>;
+            }
+        },
+    );
     const element = shallow(<TestComponent />);
     expect(element.equals(<div>Test</div>)).toBe(true);
 });
@@ -24,9 +24,7 @@ test("accepts component classes", () => {
 test("re-renders when an observable changes", async () => {
     const observable = ko.observable("Hello");
 
-    const renderFn = jest.fn(() => (
-        <div>{observable()}</div>
-    ));
+    const renderFn = jest.fn(() => <div>{observable()}</div>);
     const TestComponent = observe(renderFn);
 
     const element = shallow(<TestComponent />);
@@ -43,22 +41,26 @@ test("re-renders when an observable changes", async () => {
 });
 
 test("re-renders on prop changes, as normal", () => {
-    interface ChildProps { text: string; }
-    const childRenderFn = jest.fn(({text}: ChildProps) => (
-        <div>{text}</div>
-    ));
-    const ChildComponent = observe(childRenderFn as StatelessComponent<ChildProps>);
-    const TestComponent = observe(class extends React.Component<{}, {text: string}> {
-        constructor(props: {}) {
-            super(props);
-            this.state = {
-                text: "Foo",
-            };
-        }
-        render() {
-            return <ChildComponent text={this.state.text} />;
-        }
-    });
+    interface ChildProps {
+        text: string;
+    }
+    const childRenderFn = jest.fn(({ text }: ChildProps) => <div>{text}</div>);
+    const ChildComponent = observe(
+        childRenderFn as StatelessComponent<ChildProps>,
+    );
+    const TestComponent = observe(
+        class extends React.Component<{}, { text: string }> {
+            constructor(props: {}) {
+                super(props);
+                this.state = {
+                    text: "Foo",
+                };
+            }
+            render() {
+                return <ChildComponent text={this.state.text} />;
+            }
+        },
+    );
 
     const component = mount(<TestComponent />);
     expect(childRenderFn).toHaveBeenCalledTimes(1);
@@ -66,7 +68,6 @@ test("re-renders on prop changes, as normal", () => {
     expect(childRenderFn).toHaveBeenCalledTimes(2);
 
     expect(component.childAt(0).childAt(0).text()).toBe("Bar");
-
 });
 
 test("tracks observables properly", () => {
@@ -93,29 +94,34 @@ test("tracks observables properly", () => {
     usingNickname(true);
     expect(renderFn).toHaveBeenCalledTimes(3);
     expect(element.update().equals(<div>Vader</div>)).toBe(true);
-
 });
 
 test("can track observables based on props", () => {
     const nickname = ko.observable("The Senate");
     const realName = ko.observable("Sheev");
 
-    interface ChildProps { usingNickname: boolean; }
-    const childRenderFn = jest.fn(({usingNickname}: ChildProps) => (
+    interface ChildProps {
+        usingNickname: boolean;
+    }
+    const childRenderFn = jest.fn(({ usingNickname }: ChildProps) => (
         <div>{usingNickname ? nickname() : realName()}</div>
     ));
-    const ChildComponent = observe(childRenderFn as StatelessComponent<ChildProps>);
-    const TestComponent = observe(class extends React.Component<{}, ChildProps> {
-        constructor(props: {}) {
-            super(props);
-            this.state = {
-                usingNickname: true,
-            };
-        }
-        render() {
-            return <ChildComponent {...this.state} />;
-        }
-    });
+    const ChildComponent = observe(
+        childRenderFn as StatelessComponent<ChildProps>,
+    );
+    const TestComponent = observe(
+        class extends React.Component<{}, ChildProps> {
+            constructor(props: {}) {
+                super(props);
+                this.state = {
+                    usingNickname: true,
+                };
+            }
+            render() {
+                return <ChildComponent {...this.state} />;
+            }
+        },
+    );
 
     const component = mount(<TestComponent />);
     let callCount = 0;
@@ -133,9 +139,7 @@ test("can track observables based on props", () => {
 });
 
 test("does not re-render child components on observable change", () => {
-    const childRenderFn = jest.fn(() => (
-        <div>Child</div>
-    ));
+    const childRenderFn = jest.fn(() => <div>Child</div>);
     const ChildComponent = observe(childRenderFn);
 
     const parentText = ko.observable("Parent");
@@ -170,6 +174,4 @@ test("stops tracking dependencies on unmount", () => {
 
     component2.unmount();
     expect(observable.getSubscriptionsCount()).toBe(0);
-
-
 });

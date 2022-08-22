@@ -9,9 +9,14 @@ export interface ReactComponentBindingValue {
     params?: any;
 }
 
-const bindingHandler: KnockoutBindingHandler<HTMLElement, ReactComponentBindingValue> = {
+const bindingHandler: KnockoutBindingHandler<
+    HTMLElement,
+    ReactComponentBindingValue
+> = {
     init(element) {
-        ko.utils.domNodeDisposal.addDisposeCallback(element, () => ReactDOM.unmountComponentAtNode(element));
+        ko.utils.domNodeDisposal.addDisposeCallback(element, () =>
+            ReactDOM.unmountComponentAtNode(element),
+        );
         return { controlsDescendantBindings: true };
     },
     /**
@@ -19,8 +24,10 @@ const bindingHandler: KnockoutBindingHandler<HTMLElement, ReactComponentBindingV
      */
     update(element, valueAccessor) {
         const { props, Component, params } = ko.unwrap(valueAccessor());
-        if(!Component) {
-            throw new Error("No component provided to reactComponent bindingHandler");
+        if (!Component) {
+            throw new Error(
+                "No component provided to reactComponent bindingHandler",
+            );
         }
         // The whole props could be an observable
         // props || params for backwards compatibility
@@ -36,19 +43,26 @@ const bindingHandler: KnockoutBindingHandler<HTMLElement, ReactComponentBindingV
     },
 };
 
-const noop = (() => {/* noop */});
+const noop = () => {
+    /* noop */
+};
 const registrars = {
     register() {
         ko.bindingHandlers.reactComponent = bindingHandler;
     },
     registerShorthandSyntax(bindingHandlerName = "reactComponent") {
-        const existingPreprocessNode = (ko.bindingProvider.instance as any).preprocessNode || noop;
-        (ko.bindingProvider.instance as any).preprocessNode = function(node: Node) {
+        const existingPreprocessNode =
+            (ko.bindingProvider.instance as any).preprocessNode || noop;
+        (ko.bindingProvider.instance as any).preprocessNode = function (
+            node: Node,
+        ) {
             if (node.nodeType === 8) {
-                const match = node.nodeValue!.match(/^\s*react\s*:\s*([\w\.]+)\s+((.|\n)+?)\s*$/);
+                const match = node.nodeValue!.match(
+                    /^\s*react\s*:\s*([\w\.]+)\s+((.|\n)+?)\s*$/,
+                );
                 if (match) {
                     const div = document.createElement("div");
-                    const [ /* wholeMatch */, Component, props ] = match;
+                    const [, /* wholeMatch */ Component, props] = match;
                     div.dataset.bind = `${bindingHandlerName}: { Component: ${Component}, props: ${props} }`;
                     node.parentNode!.replaceChild(div, node);
 
@@ -61,4 +75,4 @@ const registrars = {
     },
 };
 
-export default { bindingHandler, ...registrars};
+export default { bindingHandler, ...registrars };
