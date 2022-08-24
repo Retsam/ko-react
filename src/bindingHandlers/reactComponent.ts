@@ -58,7 +58,7 @@ const registrars = {
         ) {
             if (node.nodeType === 8) {
                 const match = node.nodeValue!.match(
-                    /^\s*react\s*:\s*([\w\.]+)\s+((.|\n)+?)\s*$/,
+                    /^\s*react\s*:\s*([\w.]+)\s+((.|\n)+?)\s*$/,
                 );
                 if (match) {
                     const div = document.createElement("div");

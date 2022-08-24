@@ -60,7 +60,7 @@ function isStatelessComponent<P>(
         typeof componentClass === "function" &&
         (!componentClass.prototype || !componentClass.prototype.render) &&
         !componentClass.isReactClass &&
-        !Component.isPrototypeOf(componentClass)
+        !Object.prototype.isPrototypeOf.call(Component, componentClass)
     );
 }
 
