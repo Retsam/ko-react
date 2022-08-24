@@ -62,7 +62,8 @@ const registrars = {
                 );
                 if (match) {
                     const div = document.createElement("div");
-                    const [, /* wholeMatch */ Component, props] = match;
+                    // prettier-ignore
+                    const [/* wholeMatch */, Component, props] = match;
                     div.dataset.bind = `${bindingHandlerName}: { Component: ${Component}, props: ${props} }`;
                     node.parentNode!.replaceChild(div, node);
 
