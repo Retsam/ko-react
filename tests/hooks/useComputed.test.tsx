@@ -10,11 +10,14 @@ test("can compute JSX based on observables", () => {
         lastName: KnockoutObservable<string>;
     }
     const Component = ({ firstName, lastName }: ComponentProps) =>
-        useComputed(() => (
-            <div>
-                {firstName()} {lastName()}
-            </div>
-        ));
+        useComputed(
+            () => (
+                <div>
+                    {firstName()} {lastName()}
+                </div>
+            ),
+            [],
+        );
     const firstName = ko.observable("Bob");
     const lastName = ko.observable("Ross");
     const element = mount(
@@ -55,6 +58,7 @@ test("can be used with closure values", () => {
     const Counter = () => {
         const [count, setCount] = useState(0);
         // NOT passing a dependency array: behaves correctly, but may compute more often than necessary
+        // @ts-expect-error - testing this case, but the types consider the deps array mandatory
         return useComputed(() => (
             <div onClick={() => setCount(count + 1)}>Value is {count}</div>
         ));

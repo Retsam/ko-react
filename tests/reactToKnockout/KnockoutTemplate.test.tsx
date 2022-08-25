@@ -35,7 +35,8 @@ afterEach(() => {
     document.body.removeChild(helloWorldTemplate);
     document.body.removeChild(greeterTemplate);
     document.body.removeChild(container);
-    container = null;
+    // Non-null assertion: let the type pretend it's always defined so we don't have to do null checking in the body of the tests
+    container = null!;
 });
 
 test("Can render a template without data", () => {
@@ -47,7 +48,7 @@ test("Can render a template without data", () => {
     });
 
     const element = container.querySelector("div");
-    expect(element.textContent).toBe("Hello, World");
+    expect(element?.textContent).toBe("Hello, World");
 });
 
 test("Can render templates with data", () => {
@@ -61,5 +62,5 @@ test("Can render templates with data", () => {
         );
     });
     const element = container.querySelector("div");
-    expect(element.textContent).toBe("Hello, Mark");
+    expect(element?.textContent).toBe("Hello, Mark");
 });
