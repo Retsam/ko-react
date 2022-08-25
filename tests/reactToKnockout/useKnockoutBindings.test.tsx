@@ -12,7 +12,8 @@ beforeEach(() => {
 
 afterEach(() => {
     document.body.removeChild(container);
-    container = null;
+    // Non-null assertion: let the type pretend it's always defined so we don't have to do null checking in the body of the tests
+    container = null!;
 });
 
 test("can apply knockout bindings to an element", () => {
@@ -48,10 +49,10 @@ test("can change the data that is applied to the bindings", () => {
         ReactDOM.render(<TestComponent text="hello" />, container);
     });
     const element = container.querySelector("div");
-    expect(element.textContent).toBe("hello");
+    expect(element?.textContent).toBe("hello");
 
     act(() => {
         ReactDOM.render(<TestComponent text="there" />, container);
     });
-    expect(element.textContent).toBe("there");
+    expect(element?.textContent).toBe("there");
 });
