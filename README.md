@@ -43,6 +43,8 @@ You can configure the ["react-hooks/exhaustive-deps" linter rule](https://github
 }
 ```
 
+See the "Patterns" section for the different ways to use this hook, and a comparison to `useObservable`.
+
 #### `useObservable`
 
 Reads and subscribes to an observable - if the observable's value changes the component re-renders:
@@ -63,6 +65,8 @@ const Greeter = ({firstName, lastName}: FullNameProps) => {
     );
 }
 ```
+
+See the "Patterns" section for a comparison to `useComputed`.
 
 #### `useSubscription`
 
@@ -179,3 +183,47 @@ const Greeter = observe(({firstName, lastName}: FullNameProps) => (
 ```
 
 The implementation details of `observe` however, are somewhat ugly, and it should be considered deprecated in favor of the hooks API.
+
+## Patterns
+
+Broadly there seem to be two strategies in using this library, one is to use a very broad `useComputed` that wraps the entire JSX return:
+
+```tsx
+const Greeter = ({ personVm }: GreeterProps) => {
+    return useComputed(() => (
+        <span>
+            Hello, {personVm.firstName()} {personVm.lastName()}
+
+            <img src={personVm.avatarIcon()} />
+        </span>
+    ), [personVm]);
+}
+```
+
+In this approach `useObservable` is basically not used.
+
+A downside of this approach is that it can be awkward to mix with native React state and hooks - anything that gets used in the JSX ends up declared in the deps array which can get long.  The above example is able to mitigate this with a viewModel that can have many observable properties on it.  (This assumes the properties themselves are readonly and `personVm.firstName` will not be replaced with a different observable).
+
+---
+
+The second is a more granular `useObservable`-oriented approach;
+
+```tsx
+const Greeter = ({ personVm }: GreeterProps ) => {
+    const firstName = useObservable(personVm.firstName);
+    const lastName = useObservable(personVm.lastName);
+    const avatarIcon = useObservable(personVm.avatarIcon);
+
+    return (
+        <span>
+            Hello, {firstName} {lastName}
+
+            <img src={avatarIcon} />
+        </span>
+    );
+};
+```
+
+In this approach `useComputed` can still be used for individual parts - for example the above example could calculate a `fullName` computed - and is particularly useful for calling functions that aren't directly observable but rely on observables.
+
+The downside of this approach is that it can be easy to accidentally consume observable state in a way that isn't wrapped in either `useObservable` or `useComputed` which will result in a stale view because the component won't rerender.  [An eslint rule](https://www.npmjs.com/package/eslint-plugin-ko-react) has been written to try to catch these cases, but it's difficult to completely avoid false positives or false negatives.
