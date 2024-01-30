@@ -29,10 +29,19 @@ const Greeter = ({firstName, lastName}: FullNameProps) => useComputed(() => (
     <span>
         Hello, {firstName()} {lastName()}
     </span>
-));
+), [firstName, lastName]); // see below
 ```
 
-Can largely be used as a drop-in replacement for the `observe` HOC.
+Takes a second "dependencies" argument that follows the same rules as React's [`useMemo`](https://react.dev/reference/react/useMemo) or [`useCallback`](https://react.dev/reference/react/useCallback) hooks - the computed function is replaced and recalculated whenever one of the dep inside the array changes.  In the above example, the computed body itself will detect changes to the `firstName` and `lastName` observables, while the `[firstName, lastName]` argument will detect if `firstName` observable is replaced with a different observable entirely.
+
+You can configure the ["react-hooks/exhaustive-deps" linter rule](https://github.com/facebook/react/tree/main/packages/eslint-plugin-react-hooks) to also check this hook:
+```json
+{
+    "react-hooks/exhaustive-deps": [
+        "warn", { "additionalHooks": "useComputed" }
+    ]
+}
+```
 
 #### `useObservable`
 
