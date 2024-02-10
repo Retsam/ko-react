@@ -1,6 +1,6 @@
 import ko from "knockout";
 import React, { ComponentClass } from "react";
-import ReactDOM from "react-dom";
+import { Root, createRoot } from "react-dom/client";
 
 export interface ReactComponentBindingValue {
     Component: ComponentClass;
@@ -9,20 +9,39 @@ export interface ReactComponentBindingValue {
     params?: any;
 }
 
+// Using a symbol out of paranoia to avoid conflicting with anything else on the context
+const reactRootKey = Symbol();
+
+type ContextWithReactRoot = KnockoutBindingContext & {
+    [reactRootKey]?: Root;
+};
+
 const bindingHandler: KnockoutBindingHandler<
     HTMLElement,
     ReactComponentBindingValue
 > = {
-    init(element) {
+    init(
+        element,
+        _valueAccessor,
+        _allBindings,
+        _vm,
+        context: ContextWithReactRoot,
+    ) {
         ko.utils.domNodeDisposal.addDisposeCallback(element, () =>
-            ReactDOM.unmountComponentAtNode(element),
+            context[reactRootKey]?.unmount(),
         );
         return { controlsDescendantBindings: true };
     },
     /**
      * The main logic goes into update so that it will properly rerender if an observable is read inside the data-bind
      */
-    update(element, valueAccessor) {
+    update(
+        element,
+        valueAccessor,
+        _allBindings,
+        _vm,
+        context: ContextWithReactRoot,
+    ) {
         const { props, Component, params } = ko.unwrap(valueAccessor());
         if (!Component) {
             throw new Error(
@@ -34,12 +53,10 @@ const bindingHandler: KnockoutBindingHandler<
         const unwrappedProps = ko.unwrap(props) || ko.unwrap(params);
         // Ignore dependencies to avoid unwanted subscriptions to observables
         //   inside render functions
-        ko.ignoreDependencies(() =>
-            ReactDOM.render(
-                React.createElement(Component, unwrappedProps),
-                element,
-            ),
-        );
+        const root = (context[reactRootKey] = createRoot(element));
+        ko.ignoreDependencies(() => {
+            root.render(React.createElement(Component, unwrappedProps));
+        });
     },
 };
 

@@ -1,6 +1,6 @@
 import ko from "knockout";
 import {
-    StatelessComponent,
+    FunctionComponent,
     ComponentClass,
     Component,
     PureComponent,
@@ -12,7 +12,7 @@ import {
  * @deprecated in favor of the hooks API, which is less invasive
  */
 export default function observe<P>(
-    componentClass: StatelessComponent<P> | ComponentClass<P>,
+    componentClass: FunctionComponent<P> | ComponentClass<P>,
 ) {
     if (isStatelessComponent<P>(componentClass)) {
         componentClass = componentClassForStatelessComponent(componentClass);
@@ -55,7 +55,7 @@ export default function observe<P>(
 
 function isStatelessComponent<P>(
     componentClass: any,
-): componentClass is StatelessComponent<P> {
+): componentClass is FunctionComponent<P> {
     return (
         typeof componentClass === "function" &&
         (!componentClass.prototype || !componentClass.prototype.render) &&
@@ -65,7 +65,7 @@ function isStatelessComponent<P>(
 }
 
 function componentClassForStatelessComponent<P>(
-    componentClass: StatelessComponent<P>,
+    componentClass: FunctionComponent<P>,
 ): ComponentClass<P> {
     return class extends PureComponent<P> {
         static displayName = componentClass.displayName || componentClass.name;
