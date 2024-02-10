@@ -4,7 +4,7 @@ import { useMemo, useRef, useEffect } from "react";
 export default function useMemoWithDisposer<T>(
     memoizer: () => T,
     disposer: (t: T) => void,
-    deps: any[] | undefined,
+    deps: readonly unknown[],
 ) {
     // Stores the previous value so that it can be disposed
     const memoizedVal = useRef<T | undefined>(undefined);
