@@ -164,26 +164,6 @@ const KnockoutGreeter = ({firstName, lastName}) => (
 
 ⚠️ NOTE: the same caveat about context from `useKnockoutBindings` applies here.
 
-### Higher Order Component - `observe`
-
-A Higher Order Component which wraps a component such that any observables that are read during the render function will cause the component to rerender.
-
-```tsx
-interface FullNameProps {
-    firstName: KnockoutObservable<string>,
-    lastName: KnockoutObservable<string>
-}
-
-// Re-renders if either firstName or lastName change
-const Greeter = observe(({firstName, lastName}: FullNameProps) => (
-    <span>
-        Hello, {firstName()} {lastName()}
-    </span>
-));
-```
-
-The implementation details of `observe` however, are somewhat ugly, and it should be considered deprecated in favor of the hooks API.
-
 ## Patterns
 
 Broadly there seem to be two strategies in using this library, one is to use a very broad `useComputed` that wraps the entire JSX return:
