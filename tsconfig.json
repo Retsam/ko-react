@@ -18,7 +18,6 @@
         "strict": true,
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "suppressImplicitAnyIndexErrors": true,
         "noUnusedLocals": true
     },
     "include": ["src"]

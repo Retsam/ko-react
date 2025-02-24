@@ -1,8 +1,0 @@
-{
-    "rules": {
-        // Relative imports are currently necessary for importing test helpers.
-        // Might be possible to avoid via a tsconfig change
-        "no-relative-imports": false
-    },
-    "extends": "../tslint.json"
-}
