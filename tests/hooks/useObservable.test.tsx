@@ -1,104 +1,63 @@
 import ko from "knockout";
-import React, { useState } from "react";
+import { renderHook } from "@testing-library/react";
 import useObservable from "../../src/hooks/useObservable";
-import { mount } from "../enzyme";
 import { act } from "react-dom/test-utils";
 
 test("can read from an observable", () => {
-    const Component = ({
-        text: textObservable,
-    }: {
-        text: KnockoutObservable<string>;
-    }) => {
-        const text = useObservable(textObservable);
-        return <h1>{text}</h1>;
-    };
     const text = ko.observable("Joe");
-    const element = mount(<Component text={text} />);
-    expect(element.text()).toBe("Joe");
-    act(() => {
-        text("James");
-    });
-    expect(element.text()).toBe("James");
-    act(() => {
-        text("Jack");
-    });
-    expect(element.text()).toBe("Jack");
+
+    const { result } = renderHook(() => useObservable(text));
+    expect(result.current).toBe("Joe");
+
+    act(() => text("James"));
+    expect(result.current).toBe("James");
+
+    act(() => text("Jack"));
+    expect(result.current).toBe("Jack");
 });
 
 test("can read from a computed", () => {
-    const Component = ({
-        text: textComputed,
-    }: {
-        text: KnockoutComputed<string>;
-    }) => {
-        const text = useObservable(textComputed);
-        return <h1>{text}</h1>;
-    };
     const firstName = ko.observable("Joe");
     const lastName = ko.observable("Smith");
     const fullName = ko.computed(() => `${firstName()} ${lastName()}`);
 
-    const element = mount(<Component text={fullName} />);
+    const { result } = renderHook(() => useObservable(fullName));
 
-    expect(element.text()).toBe("Joe Smith");
+    expect(result.current).toBe("Joe Smith");
 
-    act(() => {
-        lastName("Danger");
-    });
-    expect(element.text()).toBe("Joe Danger");
+    act(() => lastName("Danger"));
+
+    expect(result.current).toBe("Joe Danger");
 });
 
 test("behaves appropriately if the observable is swapped for a different observable", () => {
-    const Child = ({ count }: { count: KnockoutObservable<number> }) => {
-        const countValue = useObservable(count);
-        return <div>{countValue}</div>;
-    };
-    let setCountObservable: React.Dispatch<
-        React.SetStateAction<KnockoutObservable<number>>
-    >;
+    const initialObs = ko.observable(0);
+    const newObs = ko.observable(1);
 
-    const Parent = () => {
-        const [countObservable, _setCountObservable] = useState(() =>
-            ko.observable(0),
-        );
-        // Leak the setter into the enclosing scope so it can be controlled by the test
-        setCountObservable = _setCountObservable;
-        return <Child count={countObservable} />;
-    };
-    const element = mount(<Parent />);
-    // Does it display correctly, initially?
-    expect(element.text()).toBe("0");
-
-    // Does it update when the observable is replaced?
-    const obs = ko.observable(1);
-    act(() => {
-        setCountObservable(() => obs);
+    const { result, rerender } = renderHook(({ obs }) => useObservable(obs), {
+        initialProps: { obs: initialObs },
     });
-    expect(element.text()).toBe("1");
 
-    // Does it update when the new observable is changed?
-    act(() => {
-        obs(2);
-    });
-    expect(element.text()).toBe("2");
+    expect(result.current).toBe(0);
+
+    // Test observable swap
+    rerender({ obs: newObs });
+    expect(result.current).toBe(1);
+
+    // Test update to new observable
+    act(() => newObs(2));
+
+    expect(result.current).toBe(2);
 });
 
 test("handles rateLimited computeds", () => {
     const obs = ko.observable(1);
-
     const rateLimited = ko
-        .computed(() => {
-            return obs() + 1;
-        })
+        .computed(() => obs() + 1)
         .extend({ rateLimit: 1000 });
 
-    const Component = () => {
-        // Should force `rateLimited` to read the new value, despite the `rateLimit`.
-        const value = useObservable(rateLimited);
-        return <div>{value}</div>;
-    };
     obs(2);
-    const element = mount(<Component />);
-    expect(element.text()).toBe("3");
+
+    const { result } = renderHook(() => useObservable(rateLimited));
+    expect(result.current).toBe(3);
 });

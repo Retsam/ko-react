@@ -1,15 +1,14 @@
 import ko from "knockout";
 import React, { useState } from "react";
-import { act } from "react-dom/test-utils";
+import { renderHook, render, screen, fireEvent } from "@testing-library/react";
 import useComputed from "../../src/hooks/useComputed";
-import { mount } from "../enzyme";
+import { act } from "react-dom/test-utils";
 
 test("can compute JSX based on observables", () => {
-    interface ComponentProps {
-        firstName: KnockoutObservable<string>;
-        lastName: KnockoutObservable<string>;
-    }
-    const Component = ({ firstName, lastName }: ComponentProps) =>
+    const firstName = ko.observable("Bob");
+    const lastName = ko.observable("Ross");
+
+    const { result } = renderHook(() =>
         useComputed(
             () => (
                 <div>
@@ -17,96 +16,105 @@ test("can compute JSX based on observables", () => {
                 </div>
             ),
             [],
-        );
-    const firstName = ko.observable("Bob");
-    const lastName = ko.observable("Ross");
-    const element = mount(
-        <Component firstName={firstName} lastName={lastName} />,
+        ),
     );
-    expect(element.text()).toBe("Bob Ross");
+
+    render(result.current);
+    expect(screen.getByText("Bob Ross")).toBeTruthy();
+
     act(() => {
         lastName("Jones");
     });
-    expect(element.text()).toBe("Bob Jones");
+
+    render(result.current);
+    expect(screen.getByText("Bob Jones")).toBeTruthy();
 });
 
 test("doesn't call the render or computed function unnecessarily", () => {
-    interface ComponentProps {
-        c: KnockoutObservable<number>;
-    }
     let renderCount = 0;
     let computedCount = 0;
-    const Component = ({ c }: ComponentProps) => {
+    const count = ko.observable(0);
+
+    const { rerender } = renderHook(() => {
         renderCount++;
         return useComputed(() => {
             computedCount++;
-            return <div>{c()}</div>;
+            return <div>{count()}</div>;
         }, []);
-    };
-    const count = ko.observable(0);
-    mount(<Component c={count} />);
+    });
+
     expect(renderCount).toBe(1);
     expect(computedCount).toBe(1);
+
     act(() => {
         count(count() + 1);
     });
+
+    rerender();
     expect(renderCount).toBe(2);
     expect(computedCount).toBe(2);
 });
 
 test("can be used with closure values", () => {
-    const Counter = () => {
+    const { result } = renderHook(() => {
         const [count, setCount] = useState(0);
-        // NOT passing a dependency array: behaves correctly, but may compute more often than necessary
-        // @ts-expect-error - testing this case, but the types consider the deps array mandatory
-        return useComputed(() => (
-            <div onClick={() => setCount(count + 1)}>Value is {count}</div>
-        ));
-    };
-    const element = mount(<Counter />);
-    act(() => {
-        element.simulate("click");
+        return {
+            // @ts-expect-error - testing this case, but the types consider the deps array mandatory
+            view: useComputed(() => (
+                <div onClick={() => setCount(count + 1)}>Value is {count}</div>
+            )),
+            setCount,
+        };
     });
-    expect(element.text()).toBe("Value is 1");
+
+    render(result.current.view);
+    fireEvent.click(screen.getByText("Value is 0"));
+
+    render(result.current.view);
+    expect(screen.getByText("Value is 1")).toBeTruthy();
 });
 
 test("doesn't call the render or computed function unnecessarily with deps", () => {
     let renderCount = 0;
     let computedCount = 0;
-    const Counter = ({ plus }: { plus: KnockoutObservable<number> }) => {
+    const plus = ko.observable(0);
+
+    const { result } = renderHook(() => {
         renderCount++;
         const [count, setCount] = useState(0);
-        return useComputed(
-            () => (
-                computedCount++,
-                (
+        return {
+            view: useComputed(() => {
+                computedCount++;
+                return (
                     <div onClick={() => setCount(count + 1)}>
                         Value is {count + plus()}
                     </div>
-                )
-            ),
-            [count],
-        );
-    };
-    const plus = ko.observable(0);
-    const element = mount(<Counter plus={plus} />);
+                );
+            }, [count]),
+            setCount,
+        };
+    });
+
+    render(result.current.view);
     expect(renderCount).toBe(1);
     expect(computedCount).toBe(1);
-    expect(element.text()).toBe("Value is 0");
+    expect(screen.getByText("Value is 0")).toBeTruthy();
 
     // Update observable state
     act(() => {
         plus(2);
     });
+
+    render(result.current.view);
     expect(renderCount).toBe(2);
     expect(computedCount).toBe(2);
-    expect(element.text()).toBe("Value is 2");
+    expect(screen.getByText("Value is 2")).toBeTruthy();
 
     // Update non-observable state
-    act(() => {
-        element.simulate("click");
-    });
+    fireEvent.click(screen.getByText("Value is 2"));
+
+    render(result.current.view);
     expect(renderCount).toBe(3);
     expect(computedCount).toBe(3);
-    expect(element.text()).toBe("Value is 3");
+    expect(screen.getByText("Value is 3")).toBeTruthy();
 });

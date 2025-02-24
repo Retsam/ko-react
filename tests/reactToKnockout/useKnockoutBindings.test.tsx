@@ -1,20 +1,6 @@
 import React, { useRef } from "react";
-import ReactDOM from "react-dom";
-import { act } from "react-dom/test-utils";
+import { render, screen } from "@testing-library/react";
 import useKnockoutBindings from "../../src/reactToKnockout/useKnockoutBindings";
-import { mount } from "../enzyme";
-
-let container: HTMLDivElement;
-beforeEach(() => {
-    container = document.createElement("div");
-    document.body.appendChild(container);
-});
-
-afterEach(() => {
-    document.body.removeChild(container);
-    // Non-null assertion: let the type pretend it's always defined so we don't have to do null checking in the body of the tests
-    container = null!;
-});
 
 test("can apply knockout bindings to an element", () => {
     const TestComponent = () => {
@@ -23,8 +9,8 @@ test("can apply knockout bindings to an element", () => {
         return <div ref={elementRef} data-bind="text: 'Test'" />;
     };
 
-    const element = mount(<TestComponent />);
-    expect(element.text()).toBe("Test");
+    render(<TestComponent />);
+    expect(screen.getByText("Test")).toBeTruthy();
 });
 
 test("can apply bindings to an element with data", () => {
@@ -35,24 +21,20 @@ test("can apply bindings to an element with data", () => {
         return <div ref={elementRef} data-bind="text: text" />;
     };
 
-    const element = mount(<TestComponent />);
-    expect(element.text()).toBe("Hello");
+    render(<TestComponent />);
+    expect(screen.getByText("Hello")).toBeTruthy();
 });
 
 test("can change the data that is applied to the bindings", () => {
-    const TestComponent = (props: { text: string }) => {
+    const TestComponent = ({ text }: { text: string }) => {
         const elementRef = useRef<HTMLDivElement>(null);
-        useKnockoutBindings(elementRef, props);
+        useKnockoutBindings(elementRef, { text });
         return <div ref={elementRef} data-bind="text: text" />;
     };
-    act(() => {
-        ReactDOM.render(<TestComponent text="hello" />, container);
-    });
-    const element = container.querySelector("div");
-    expect(element?.textContent).toBe("hello");
 
-    act(() => {
-        ReactDOM.render(<TestComponent text="there" />, container);
-    });
-    expect(element?.textContent).toBe("there");
+    const { rerender } = render(<TestComponent text="hello" />);
+    expect(screen.getByText("hello")).toBeTruthy();
+
+    rerender(<TestComponent text="there" />);
+    expect(screen.getByText("there")).toBeTruthy();
 });
