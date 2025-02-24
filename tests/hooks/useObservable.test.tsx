@@ -25,9 +25,9 @@ test("can read from a computed", () => {
 
     expect(result.current).toBe("Joe Smith");
 
-    act(() => lastName("Danger"));
+    act(() => lastName("Momma"));
 
-    expect(result.current).toBe("Joe Danger");
+    expect(result.current).toBe("Joe Momma");
 });
 
 test("behaves appropriately if the observable is swapped for a different observable", () => {
