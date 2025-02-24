@@ -1,7 +1,6 @@
 import React from "react";
+import { render, screen } from "@testing-library/react";
 import KnockoutTemplate from "../../src/reactToKnockout/KnockoutTemplate";
-import ReactDOM from "react-dom";
-import { act } from "react-dom/test-utils";
 
 // <script type="text/html" id="theTemplate">{templateContent}</script>
 const buildTemplateElement = (id: string, innerHTML: string) => {
@@ -11,6 +10,7 @@ const buildTemplateElement = (id: string, innerHTML: string) => {
     templateElement.text = innerHTML;
     return templateElement;
 };
+
 const helloWorldTemplateId = "helloWorld";
 const helloWorldTemplate = buildTemplateElement(
     helloWorldTemplateId,
@@ -23,44 +23,26 @@ const greeterTemplate = buildTemplateElement(
     `Hello, <span data-bind="text: name"></span>`,
 );
 
-let container: HTMLDivElement;
 beforeEach(() => {
     document.body.appendChild(helloWorldTemplate);
     document.body.appendChild(greeterTemplate);
-    container = document.createElement("div");
-    document.body.appendChild(container);
 });
 
 afterEach(() => {
     document.body.removeChild(helloWorldTemplate);
     document.body.removeChild(greeterTemplate);
-    document.body.removeChild(container);
-    // Non-null assertion: let the type pretend it's always defined so we don't have to do null checking in the body of the tests
-    container = null!;
 });
 
 test("Can render a template without data", () => {
-    act(() => {
-        ReactDOM.render(
-            <KnockoutTemplate name={helloWorldTemplateId} />,
-            container,
-        );
-    });
-
-    const element = container.querySelector("div");
-    expect(element?.textContent).toBe("Hello, World");
+    render(<KnockoutTemplate name={helloWorldTemplateId} />);
+    screen.getByText("Hello, World");
 });
 
 test("Can render templates with data", () => {
-    act(() => {
-        ReactDOM.render(
-            <KnockoutTemplate
-                name={greeterTemplateId}
-                data={{ name: "Mark" }}
-            />,
-            container,
-        );
-    });
-    const element = container.querySelector("div");
-    expect(element?.textContent).toBe("Hello, Mark");
+    render(
+        <KnockoutTemplate name={greeterTemplateId} data={{ name: "Mark" }} />,
+    );
+    expect(screen.getByDisplayValue);
+    // Need a custom function to handle 'Hello, <span>Mark</span>', and there's multiple matches, so getAll
+    screen.getAllByText((_, el) => el?.textContent === "Hello, Mark");
 });
