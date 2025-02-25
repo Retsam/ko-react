@@ -1,3 +1,4 @@
+import { act } from "@testing-library/react";
 import ko from "knockout";
 
 export const setupKoTest = (html: string, viewModel: object) => {
@@ -11,6 +12,6 @@ export const setupKoTest = (html: string, viewModel: object) => {
     const element = div.children[0] as HTMLElement;
 
     window.document.body.appendChild(element);
-    ko.applyBindings(viewModel, element);
+    act(() => ko.applyBindings(viewModel, element));
     return element;
 };

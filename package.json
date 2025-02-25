@@ -14,7 +14,7 @@
     "prettier:write": "prettier . --config .prettierrc --write",
     "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --cache --max-warnings 0",
     "pretest": "echo 'Running tests...'",
-    "test": "echo 'Reworking tests'",
+    "test": "jest",
     "prepare": "npm run test && npm run build"
   },
   "author": "Retsam19",
