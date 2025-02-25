@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import useKnockoutBindings from "reactToKnockout/useKnockoutBindings";
 
 export interface KnockoutTemplateProps {

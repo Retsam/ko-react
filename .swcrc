@@ -1,0 +1,14 @@
+// Config for SWC - currently used both by our webpack swc-loader and @swc/jest
+{
+    "jsc": {
+        "target": "es2015",
+        "parser": {
+            "syntax": "typescript",
+            "tsx": true
+        },
+        // equivalent to "jsx": "react-jsx" in tsconfig
+        "transform": {
+            "react": { "runtime": "automatic" }
+        }
+    }
+}
