@@ -27,9 +27,10 @@ const bindingHandler: KnockoutBindingHandler<
         _vm,
         context: ContextWithReactRoot,
     ) {
-        ko.utils.domNodeDisposal.addDisposeCallback(element, () =>
-            context[reactRootKey]?.unmount(),
-        );
+        ko.utils.domNodeDisposal.addDisposeCallback(element, () => {
+            context[reactRootKey]?.unmount();
+            context[reactRootKey] = undefined;
+        });
         return { controlsDescendantBindings: true };
     },
     /**
@@ -53,7 +54,10 @@ const bindingHandler: KnockoutBindingHandler<
         const unwrappedProps = ko.unwrap(props) || ko.unwrap(params);
         // Ignore dependencies to avoid unwanted subscriptions to observables
         //   inside render functions
-        const root = (context[reactRootKey] = createRoot(element));
+        if (!context[reactRootKey]) {
+            context[reactRootKey] = createRoot(element);
+        }
+        const root = context[reactRootKey];
         ko.ignoreDependencies(() => {
             root.render(React.createElement(Component, unwrappedProps));
         });
