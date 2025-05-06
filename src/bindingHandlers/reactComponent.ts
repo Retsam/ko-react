@@ -28,8 +28,15 @@ const bindingHandler: KnockoutBindingHandler<
         context: ContextWithReactRoot,
     ) {
         ko.utils.domNodeDisposal.addDisposeCallback(element, () => {
-            context[reactRootKey]?.unmount();
-            context[reactRootKey] = undefined;
+            const root = context[reactRootKey];
+            if (root) {
+                // Putting this in a requestAnimationFrame - apparently it can make a race condition where it unmounts in the middle of a render
+                // https://github.com/Retsam/ko-react/issues/37#issuecomment-2431310347
+                requestAnimationFrame(() => {
+                    root.unmount();
+                });
+                context[reactRootKey] = undefined;
+            }
         });
         return { controlsDescendantBindings: true };
     },
