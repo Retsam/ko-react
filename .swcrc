@@ -1,7 +1,7 @@
 // Config for SWC - currently used both by our webpack swc-loader and @swc/jest
 {
     "jsc": {
-        "target": "es2015",
+        "target": "es2017",
         "parser": {
             "syntax": "typescript",
             "tsx": true
